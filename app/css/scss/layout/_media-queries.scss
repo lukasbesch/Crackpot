@@ -1,0 +1,47 @@
+/***** Media Queries *****/
+
+    /* Custom, iPhone Retina */
+    @media only screen and (min-width : 320px) {
+    
+    }
+    
+    /* Extra Small Devices, Phones */
+    @media only screen and (min-width : 480px) {
+		
+		h2 {font-size: 28px;}
+		
+    }
+
+    /* Small Devices, Tablets */
+    @media only screen and (min-width : 768px) {
+	    
+	    #timer {
+		    
+		    
+		    .timer_box {
+			    min-width: 61px;
+			    
+			    p {
+			    	font-size: 14px;
+		    	}
+		    	
+		    	span {
+			    	font-size: 24px;
+		    	}
+		    }
+       }
+    }
+
+    /* Medium Devices, Desktops */
+    @media only screen and (min-width : 992px) {
+	    
+	      .timer_box {
+			    min-width: 61px;
+			}
+
+    }
+
+    /* Large Devices, Wide Screens */
+    @media only screen and (min-width : 1200px) {
+
+    }

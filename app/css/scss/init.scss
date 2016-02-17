@@ -1,0 +1,13 @@
+// Import vendor CSS
+@import "vendor/bootstrap";
+@import 'vendor/font-awesome';
+
+// Core variables and mixins
+@import "config/variables";
+@import "config/mixins";
+
+// Import components
+@import 'layout/_typography';
+@import 'layout/_main';
+@import 'layout/_navigation';
+@import 'layout/_media-queries';
