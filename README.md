@@ -16,12 +16,7 @@ https://html5boilerplate.com
 
 ==========================
 
-Front-end boilerplate for Gulp with everything you need to get started.
-
 * npm install
 * Master task: gulp
     Serve 'app' to localhost:3000
 * Deploy task: gulp production
-
-
-
