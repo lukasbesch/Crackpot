@@ -161,22 +161,22 @@ gulp.task('html', function() {
 
 // Migrate over all HTML files for deployment
 gulp.task('html-deploy', function() {
-          
+
 	// Copy everything but the HTML files, even invisible files
 	gulp.src(['app/*', '!app/*.html', 'app/.*', '!app/**/*.html'])
 		.pipe(plumber())
 		.pipe(gulp.dest('dist'));
-    
-	// Copy and compress all HTML Files     
+
+	// Copy and compress all HTML Files
 	gulp.src(['app/*.html', 'app/**/*.html'])
 		.pipe(plumber())
 		.pipe(HTMLmin({
-			collapseWhitespace: true, 
+			collapseWhitespace: true,
 			removeComments: true,
 		}))
 		.pipe(gulp.dest('dist'));
-	
-	// Copy all font files 
+
+	// Copy all font files
 	gulp.src('app/fonts/**/*')
 		.pipe(plumber())
 		.pipe(gulp.dest('dist/fonts'));
@@ -213,7 +213,7 @@ gulp.task('default', ['browserSync', 'scripts', 'scripts-settings', 'vendor-scri
     //watch all HTML, JS and CSS files and the image folder
     gulp.watch(['app/*.html', 'app/**/*.html'], ['html']);
     gulp.watch('app/css/scss/**', ['styles']);
-    gulp.watch(['app/js/*', 'app/js/**/*'], ['scripts']);
+    gulp.watch(['app/js/*', 'app/js/**/*'], ['scripts', 'scripts-settings']);
     gulp.watch('app/images/**', ['images']);
 });
 
