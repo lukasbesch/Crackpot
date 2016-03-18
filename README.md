@@ -7,12 +7,12 @@ This is very WIP and not intended for production use!
 ==========================
 
 * npm install
-* Master task: gulp
+* Master task: gulp  
     Serve 'app' to localhost:3000
-* Deploy task: gulp production
-* PSI mobile task: gulp mobile
+* Deploy task: gulp production  
+* PSI mobile task: gulp mobile  
     Run mobile Google PageSpeed Insights on dist folder
-* PSI Desktop task: gulp desktop
+* PSI Desktop task: gulp desktop  
     Run desktop Google PageSpeed Insights on dist folder
 
 ==========================
