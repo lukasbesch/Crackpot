@@ -60,7 +60,10 @@ gulp.task( 'browserSync', function() {
 
 // Compress images & handle SVG files
 gulp.task('images', function(tmp) {
-	gulp.src([config.srcDir + 'images/*.jpg', srcDir + 'images/*.png'])
+	gulp.src([
+	        config.srcDir + 'images/*.jpg',
+	        config.srcDir + 'images/*.png'
+	    ])
 		.pipe(plumber())
 		.pipe(imagemin({ optimizationLevel: 5, progressive: true, interlaced: true }))
 		.pipe(gulp.dest(config.srcDir + 'images'));
@@ -78,7 +81,10 @@ gulp.task('images-deploy', function() {
 
 // Compile JS plugins
 gulp.task('scripts', function() {
-    return gulp.src([config.srcDir + 'js/plugins/*.js', config.srcDir + 'js/plugins/**/*.js'])
+    return gulp.src([
+            config.srcDir + 'js/plugins/*.js',
+            config.srcDir + 'js/plugins/**/*.js'
+        ])
 		.pipe(plumber())
 		.pipe(concat('plugins.js'))
 		.on('error', gutil.log)
@@ -88,7 +94,10 @@ gulp.task('scripts', function() {
 
 // Compile JS settings
 gulp.task('scripts-settings', function() {
-	return gulp.src([config.srcDir + 'js/settings/*.js', config.srcDir + 'js/settings/**/*.js'])
+	return gulp.src([
+	        config.srcDir + 'js/settings/*.js',
+            config.srcDir + 'js/settings/**/*.js'
+        ])
 		.pipe(plumber())
 		.pipe(concat('main.js'))
 		.on('error', gutil.log)
@@ -98,7 +107,10 @@ gulp.task('scripts-settings', function() {
 
 // Compile and compress JS plugins for deployment
 gulp.task('scripts-deploy', function() {
-    return gulp.src([config.srcDir + 'js/plugins/*.js', config.srcDir + 'js/plugins/**/*.js'])
+    return gulp.src([
+            config.srcDir + 'js/plugins/*.js',
+            config.srcDir + 'js/plugins/**/*.js'
+        ])
 		.pipe(plumber())
 		.pipe(concat('plugins.js'))
 		.pipe(uglify())
@@ -107,7 +119,10 @@ gulp.task('scripts-deploy', function() {
 
 // Compile and compress JS settings for deployment
 gulp.task('scripts-settings-deploy', function() {
-    return gulp.src([config.srcDir + 'js/settings/**/*.js', config.srcDir + 'js/settings/**/*.js'])
+    return gulp.src([
+            config.srcDir + 'js/settings/**/*.js',
+            config.srcDir + 'js/settings/**/*.js'
+        ])
 		.pipe(plumber())
 		.pipe(concat('main.js'))
 		.pipe(uglify())
@@ -155,7 +170,7 @@ gulp.task('styles-deploy', function() {
 	.pipe(plumber())
 	.pipe(sass({
 		includePaths: [
-			srcDir + 'css/scss',
+			config.srcDir + 'css/scss',
 		]
 	}))
 	.pipe(autoprefixer(config.browserList))
@@ -180,12 +195,17 @@ gulp.task('html', function() {
 gulp.task('html-deploy', function() {
 
 	// Copy everything but the HTML files, even invisible files
-	gulp.src([config.srcDir + '*', '!' + config.srcDir + '*.html', config.srcDir + '.*', '!' + config.srcDir + '**/*.html'])
+	gulp.src([
+	        config.srcDir + '*',
+	        config.srcDir + '.*',
+            '!' + config.srcDir + '*.html',
+            '!' + config.srcDir + '**/*.html'
+	    ])
 		.pipe(plumber())
-		.pipe(gulp.dest(distDir));
+		.pipe(gulp.dest(config.distDir));
 
 	// Copy and compress all HTML Files
-	gulp.src([config.srcDir + '*.html', config.srcDir + '**/*.html', config.srcDir + '*.php', config.srcDir + '**/*.php'])
+	gulp.src([config.srcDir + '*.html', config.srcDir + '**/*.html'])
 		.pipe(plumber())
 		.pipe(HTMLmin({
 			collapseWhitespace: true,
@@ -194,7 +214,7 @@ gulp.task('html-deploy', function() {
 		.pipe(gulp.dest(config.distDir));
 
 	// Copy all font files
-	gulp.src(srcDir + 'fonts/**/*')
+	gulp.src(config.srcDir + 'fonts/**/*')
 		.pipe(plumber())
 		.pipe(gulp.dest(config.distDir + 'fonts'));
 
@@ -214,7 +234,7 @@ gulp.task('clean', function() {
 // Create folders using shell
 gulp.task('scaffold', function() {
 	return shell.task([
-		'mkdir dist',
+	    'mkdir dist',
 		'mkdir dist/fonts',
 		'mkdir dist/images',
 		'mkdir dist/js',
@@ -227,11 +247,11 @@ gulp.task('scaffold', function() {
 
 // Serve dist folder with swank
 gulp.task('serve', function(cb){
-  swank({
-    watch: false,
-    path: 'dist',
-    log: false
-  }).then(function(s){
+    swank({
+        watch: false,
+        path: 'dist',
+        log: false
+    }).then(function(s){
     console.log('Server running: '+s.url);
     cb();
   });
