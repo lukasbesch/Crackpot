@@ -10,8 +10,8 @@
 var projectURL      = 'http://localhost:3000';
 var distURL         = 'http://localhost:8888/_Frameworks/Crackpot/dist/';
 var liveURL         = 'http://wwww.example.com';
-var srcDir          = './app/';
-var distDir         = './dist/';
+var srcDir          = 'app/';
+var distDir         = 'dist/';
 
 //
 // Dependencies
@@ -143,11 +143,11 @@ gulp.task('vendor-scripts', function() {
 // Compile SCSS files
 gulp.task('styles', function() {
 	// The master SCSS file that imports everything
-	return gulp.src(srcDir + 'scss/init.scss')
-		.pipe(plumber({
-	    	errorHandler: function (err) {
-			console.log(err);
-			this.emit('end');
+	return gulp.src(srcDir + 'css/scss/init.scss')
+    .pipe(plumber({
+		errorHandler: function (err) {
+        console.log(err);
+		this.emit('end');
 	    }
 	}))
 	.pipe(sourceMaps.init())
@@ -272,14 +272,36 @@ gulp.task('serve', function(cb){
 //
 // http://tldp.org/LDP/abs/html/exit-status.html
 // -----------------------------------------------------------------------------
-gulp.task('pagespeed', function() {
+gulp.task('psi-desktop', function() {
   // Set up a public tunnel so PageSpeed can see the local site.
   return ngrok.connect(8000, function (err_ngrok, url) {
     console.log(c.cyan('ngrok'), '- serving your site from', c.yellow(url));
 
     // Run PageSpeed once the tunnel is up.
     pageSpeed.output(url, {
-      strategy: ['mobile', 'desktop'],
+      strategy: ['desktop'],
+      threshold: 80
+    }, function (err_psi, data) {
+      // Log any potential errors and return a FAILURE.
+      if (err_psi) {
+        log(err_psi);
+        process.exit(1);
+      }
+
+      // Kill the ngrok tunnel and return SUCCESS.
+      process.exit(0);
+    });
+  });
+});
+
+gulp.task('psi-mobile', function() {
+  // Set up a public tunnel so PageSpeed can see the local site.
+  return ngrok.connect(8000, function (err_ngrok, url) {
+    console.log(c.cyan('ngrok'), '- serving your site from', c.yellow(url));
+
+    // Run PageSpeed once the tunnel is up.
+    pageSpeed.output(url, {
+      strategy: ['mobile'],
       threshold: 80
     }, function (err_psi, data) {
       // Log any potential errors and return a FAILURE.
@@ -316,5 +338,6 @@ gulp.task('production', gulpSequence('clean', 'scaffold', ['scripts-deploy', 'sc
 // Page Speed Insights Task
 //  Start ngrok server
 //  Run PSI on tunnel URL
-gulp.task('psi', gulpSequence('serve', 'pagespeed'));
+gulp.task('mobile', gulpSequence('serve', 'psi-mobile'));
+gulp.task('desktop', gulpSequence('serve', 'psi-desktop'));
 
