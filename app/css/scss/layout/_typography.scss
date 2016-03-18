@@ -1,19 +1,19 @@
 body {
-	font-family: 'Lato', Helvetica, Arial, sans-serif;
+	font-family: system, -apple-system, ".SFNSDisplay-Regular", "Helvetica Neue", "Lucida Grande", sans-serif;
 	font-size: 16px;
 	color: #111;
 }
 
-
-h2 {
-	font-weight: 900;
-	text-transform: uppercase;
-	font-size: 18px;
-	
-	span {
-		font-weight: 700;
-	}
-	
+h1 {
+    padding: 20px 0 0;
+    margin: 0;
+    font-weight: 900;
+    text-transform: uppercase;
 }
 
-strong {font-weight: 700;}
+h2 {
+    margin: 0 0 20px;
+	font-weight: 300;
+	text-transform: uppercase;
+	font-size: 18px;
+}

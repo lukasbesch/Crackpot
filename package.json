@@ -1,8 +1,16 @@
 {
-  "name": "YourProject",
+  "name": "Crackpot",
   "version": "0.0.1",
-  "description": "Description of your project",
-  "dependencies": {},
+  "description": "A nice Gulp boilerplate",
+  "author": {
+		"name": "David Spörl",
+		"url": "http://www.theofficial.de"
+	},
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/RawDawg/Crackpot/"
+	},
   "devDependencies": {
     "browser-sync": "^2.10.1",
     "gulp": "^3.9.1",
