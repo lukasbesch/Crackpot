@@ -23,6 +23,7 @@ var uglify      	= require('gulp-uglify');
 var sass        	= require('gulp-sass');
 var sourceMaps  	= require('gulp-sourcemaps');
 var autoprefixer 	= require('gulp-autoprefixer');
+var critical        = require('critical');
 
 // Min
 var CSSnano   		= require('gulp-cssnano');
@@ -318,12 +319,12 @@ gulp.task('psi-mobile', function() {
 });
 
 
-// ☱☲☴ Gulp tasks ☱☲☴
+// ☱☲☴☲☱☲☴ Gulp tasks ☱☲☴☲☱☲☴
 
-// Master Task
-// 	Start web server,
-//	sync browsers,
-//  compress all scripts and SCSS files
+// ☱☲☴ Master Task
+// Start web server,
+// sync browsers,
+// compress all scripts and SCSS files
 gulp.task('default', ['browserSync', 'scripts', 'scripts-settings', 'vendor-scripts', 'styles'], function() {
     //watch all HTML, JS and CSS files and the image folder
     gulp.watch([config.srcDir + '*.html', config.srcDir + '**/*.html', config.srcDir + '*.php', config.srcDir + '**/*.php'], ['html']);
@@ -332,14 +333,27 @@ gulp.task('default', ['browserSync', 'scripts', 'scripts-settings', 'vendor-scri
     gulp.watch(config.srcDir + 'images/**', ['images']);
 });
 
-// Production Task
-//	Copy everything over and compress where neccessary
+// ☱☲☴ Production Task
+// Copy everything over and compress where neccessary
 gulp.task('production', gulpSequence('clean', 'scaffold', ['scripts-deploy', 'scripts-settings-deploy', 'styles-deploy', 'images-deploy'], 'html-deploy'));
 
-
-// Page Speed Insights Task
-//  Start ngrok server
-//  Run PSI on tunnel URL
+// ☱☲☴ Page Speed Insights Task
+// Start ngrok server
+// Run PSI on tunnel URL
 gulp.task('mobile', gulpSequence('serve', 'psi-mobile'));
 gulp.task('desktop', gulpSequence('serve', 'psi-desktop'));
+
+// ☱☲☴ Critical task
+// Insert render blocking CSS in index.html inline
+gulp.task('critical', ['production'], function (cb) {
+    critical.generate({
+        inline: true,
+        base: 'dist/',
+        src: 'index.html',
+        dest: 'dist/index.html',
+        minify: true,
+        width: 320,
+        height: 480
+    });
+});
 

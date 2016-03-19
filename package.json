@@ -3,16 +3,17 @@
   "version": "0.0.1",
   "description": "A nice Gulp boilerplate",
   "author": {
-		"name": "David Spörl",
-		"url": "http://www.theofficial.de"
-	},
-	"license": "MIT",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/RawDawg/Crackpot/"
-	},
+    "name": "David Spörl",
+    "url": "http://www.theofficial.de"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RawDawg/Crackpot/"
+  },
   "devDependencies": {
     "browser-sync": "^2.10.1",
+    "critical": "^0.7.2",
     "gulp": "^3.9.1",
     "gulp-autoprefixer": "^3.1.0",
     "gulp-concat": "^2.6.0",
