@@ -199,6 +199,7 @@ gulp.task('html-deploy', function() {
 	// Copy everything but the HTML files, even invisible files
 	gulp.src([
 	        config.srcDir + '*',
+	        config.srcDir + '**/*',
 	        config.srcDir + '.*',
             '!' + config.srcDir + '*.html',
             '!' + config.srcDir + '**/*.html'
@@ -262,7 +263,7 @@ gulp.task('critical', function (cb) {
 
 // ☱☲☴ Pagespeed Insights ☱☲☴
 
-// Serve dist folder with swank
+// Serve dist folder with swank on port 8000
 gulp.task('serve', function(cb){
     swank({
         watch: false,
@@ -350,7 +351,9 @@ gulp.task('default', ['browserSync', 'scripts', 'scripts-settings', 'vendor-scri
 });
 
 // ☱☲☴ Production Task
-// Copy everything over and compress where neccessary
+// Clean dist folder
+// Minimize all the things and copy them over
+// Insert render blocking CSS inline
 gulp.task('production', gulpSequence('clean', 'scaffold', ['scripts-deploy', 'scripts-settings-deploy', 'styles-deploy', 'images-deploy', 'html-deploy'], 'critical'));
 
 // ☱☲☴ Page Speed Insights Task
