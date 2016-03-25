@@ -107,7 +107,7 @@ gulp.task('scripts-settings', function() {
 		.pipe(browserSync.reload({stream: true}));
 });
 
-// Compile and compress JS plugins for deployment
+// Compile and minimize JS plugins for deployment
 gulp.task('scripts-deploy', function() {
     return gulp.src([
             config.srcDir + 'js/plugins/*.js',
@@ -119,7 +119,7 @@ gulp.task('scripts-deploy', function() {
 		.pipe(gulp.dest(config.distDir + 'js'));
 });
 
-// Compile and compress JS settings for deployment
+// Compile and minimize JS settings for deployment
 gulp.task('scripts-settings-deploy', function() {
     return gulp.src([
             config.srcDir + 'js/settings/**/*.js',
@@ -196,18 +196,23 @@ gulp.task('html', function() {
 // Migrate over all HTML files for deployment
 gulp.task('html-deploy', function() {
 
-	// Copy everything but the HTML files, even invisible files
+	// Copy everything, even invisible files but …
+	// … do not copy the JS plugins & settings and the SASS files
 	gulp.src([
 	        config.srcDir + '*',
 	        config.srcDir + '**/*',
 	        config.srcDir + '.*',
             '!' + config.srcDir + '*.html',
-            '!' + config.srcDir + '**/*.html'
+            '!' + config.srcDir + '**/*.html',
+            '!' + config.srcDir + '{js/plugins,js/plugins/**}',
+            '!' + config.srcDir + '{js/settings,js/settings/**}',
+            '!' + config.srcDir + '{css/scss,css/scss/**} '
+
 	    ])
 		.pipe(plumber())
 		.pipe(gulp.dest(config.distDir));
 
-	// Copy and compress all HTML Files
+	// Copy and minimize all HTML Files
 	gulp.src([config.srcDir + '*.html', config.srcDir + '**/*.html'])
 		.pipe(plumber())
 		.pipe(HTMLmin({
@@ -341,7 +346,7 @@ gulp.task('psi-mobile', function() {
 // ☱☲☴ Master Task
 // Start web server,
 // sync browsers,
-// compress all scripts and SCSS files
+// Minimize all scripts and SCSS files
 gulp.task('default', ['browserSync', 'scripts', 'scripts-settings', 'vendor-scripts', 'styles'], function() {
     //watch all HTML, JS and CSS files and the image folder
     gulp.watch([config.srcDir + '*.html', config.srcDir + '**/*.html', config.srcDir + '*.php', config.srcDir + '**/*.php'], ['html']);
