@@ -31,6 +31,7 @@ var HTMLmin 		= require('gulp-htmlmin');
 var imagemin    	= require('gulp-imagemin');
 
 // Utilities
+var del             = require('del');
 var gutil       	= require('gulp-util');
 var browserSync 	= require('browser-sync');
 var gulpSequence 	= require('gulp-sequence').use(gulp);
@@ -226,10 +227,10 @@ gulp.task('html-deploy', function() {
 });
 
 // Cleans the dist directory in case things got deleted
-gulp.task('clean', function() {
-	return shell.task([
-		'rm -rf dist'
-	]);
+gulp.task('clean', function () {
+  return del([
+    config.distDir
+  ]);
 });
 
 // Create folders using shell
@@ -241,6 +242,21 @@ gulp.task('scaffold', function() {
 		'mkdir dist/js',
 		'mkdir dist/css'
 	]);
+});
+
+
+// ☱☲☴ Critical task
+// Insert render blocking CSS in index.html inline
+gulp.task('critical', function (cb) {
+    critical.generate({
+        inline: true,
+        base: 'dist/',
+        src: 'index.html',
+        dest: 'dist/index.html',
+        minify: true,
+        width: 320,
+        height: 480
+    });
 });
 
 
@@ -335,25 +351,10 @@ gulp.task('default', ['browserSync', 'scripts', 'scripts-settings', 'vendor-scri
 
 // ☱☲☴ Production Task
 // Copy everything over and compress where neccessary
-gulp.task('production', gulpSequence('clean', 'scaffold', ['scripts-deploy', 'scripts-settings-deploy', 'styles-deploy', 'images-deploy'], 'html-deploy'));
+gulp.task('production', gulpSequence('clean', 'scaffold', ['scripts-deploy', 'scripts-settings-deploy', 'styles-deploy', 'images-deploy', 'html-deploy'], 'critical'));
 
 // ☱☲☴ Page Speed Insights Task
 // Start ngrok server
 // Run PSI on tunnel URL
 gulp.task('mobile', gulpSequence('serve', 'psi-mobile'));
 gulp.task('desktop', gulpSequence('serve', 'psi-desktop'));
-
-// ☱☲☴ Critical task
-// Insert render blocking CSS in index.html inline
-gulp.task('critical', ['production'], function (cb) {
-    critical.generate({
-        inline: true,
-        base: 'dist/',
-        src: 'index.html',
-        dest: 'dist/index.html',
-        minify: true,
-        width: 320,
-        height: 480
-    });
-});
-
