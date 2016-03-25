@@ -187,7 +187,7 @@ gulp.task('styles-deploy', function() {
 // Watch all HTML files
 gulp.task('html', function() {
 	//Watch all HTML files and refresh when something changes
-	return gulp.src(config.srcDir + '*.html')
+	return gulp.src([config.srcDir + '*.html', config.srcDir + '**/*.html'])
 		.pipe(plumber())
 		.pipe(browserSync.reload({stream: true}))
 		.on('error', gutil.log);
@@ -221,18 +221,18 @@ gulp.task('html-deploy', function() {
 		}))
 		.pipe(gulp.dest(config.distDir));
 
-	// Copy all font files
+	// Grab all font files
 	gulp.src(config.srcDir + 'fonts/**/*')
 		.pipe(plumber())
 		.pipe(gulp.dest(config.distDir + 'fonts'));
 
-	// Grab all of the styles
+	// Grab all styles
 	gulp.src([config.srcDir + 'css/*.css', '!' + config.srcDir + 'css/style.css'])
 		.pipe(plumber())
 		.pipe(gulp.dest(config.distDir + 'css'));
 });
 
-// Cleans the dist directory in case things got deleted
+// Clean the dist directory
 gulp.task('clean', function () {
   return del([
     config.distDir
