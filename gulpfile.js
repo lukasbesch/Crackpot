@@ -44,6 +44,7 @@ var color           = gutil.colors;
 
 // ☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴☲
 
+
 // ☱☲☴ Setup browserSync
 
 gulp.task( 'browserSync', function() {
@@ -131,7 +132,7 @@ gulp.task('scripts-settings-deploy', function() {
 		.pipe(gulp.dest(config.distDir + 'js'));
 });
 
-// Copy vendor scripts for production
+// Copy vendor scripts for deployment
 gulp.task('vendor-scripts', function() {
 	gulp.src(config.srcDir + 'js/vendor/**/*.*')
 		.pipe(gulp.dest(config.distDir + 'js/vendor'));
@@ -195,7 +196,6 @@ gulp.task('html', function() {
 
 // Migrate over all HTML files for deployment
 gulp.task('html-deploy', function() {
-
 	// Copy everything, even invisible files but …
 	// … do not copy the JS plugins & settings and the SASS files
 	gulp.src([
@@ -206,8 +206,7 @@ gulp.task('html-deploy', function() {
             '!' + config.srcDir + '**/*.html',
             '!' + config.srcDir + '{js/plugins,js/plugins/**}',
             '!' + config.srcDir + '{js/settings,js/settings/**}',
-            '!' + config.srcDir + '{css/scss,css/scss/**} '
-
+            '!' + config.srcDir + '{css/scss,css/scss/**}'
 	    ])
 		.pipe(plumber())
 		.pipe(gulp.dest(config.distDir));
@@ -299,7 +298,6 @@ gulp.task('psi-desktop', function() {
   // Set up a public tunnel so PageSpeed can see the local site.
   return ngrok.connect(8000, function (err_ngrok, url) {
     console.log(color.blue('ngrok'), '- serving your site from', color.black.bgBlue(url));
-
     // Run PageSpeed once the tunnel is up.
     pageSpeed.output(url, {
       strategy: ['desktop'],
@@ -310,7 +308,6 @@ gulp.task('psi-desktop', function() {
         log(err_psi);
         process.exit(1);
       }
-
       // Kill the ngrok tunnel and return SUCCESS.
       process.exit(0);
     });
@@ -322,7 +319,6 @@ gulp.task('psi-mobile', function() {
   // Set up a public tunnel so PageSpeed can see the local site.
   return ngrok.connect(8000, function (err_ngrok, url) {
     console.log(color.blue('ngrok'), '- serving your site from', color.black.bgBlue(url));
-
     // Run PageSpeed once the tunnel is up.
     pageSpeed.output(url, {
       strategy: ['mobile'],
@@ -333,7 +329,6 @@ gulp.task('psi-mobile', function() {
         log(err_psi);
         process.exit(1);
       }
-
       // Kill the ngrok tunnel and return SUCCESS.
       process.exit(0);
     });
