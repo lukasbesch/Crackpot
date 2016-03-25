@@ -3,9 +3,24 @@ html, body {
     }
 
 body {
-    text-align: center;
     color: white;
     background: #2e0638;
     }
 
+.container {
+    height: 100%;
+    text-align: center;
 
+    &:before {
+        height: 100%;
+        content: ' ';
+        display: inline-block;
+        vertical-align: middle;
+    }
+}
+
+#crackpot {
+    display: inline-block;
+    vertical-align: middle;  /* vertical alignment of the inline element */
+    margin-top: -40px;
+}
