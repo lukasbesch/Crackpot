@@ -7,7 +7,7 @@
 
 // Project variables
 
-var config          = require('./config.json');
+var config        = require('./config.json');
 
 //
 // Dependencies
@@ -23,24 +23,25 @@ var uglify      	= require('gulp-uglify');
 var sass        	= require('gulp-sass');
 var sourceMaps  	= require('gulp-sourcemaps');
 var autoprefixer 	= require('gulp-autoprefixer');
-var critical        = require('critical');
+var critical      = require('critical');
 
 // Min
 var CSSnano   		= require('gulp-cssnano');
-var HTMLmin 		= require('gulp-htmlmin');
+var HTMLmin 		  = require('gulp-htmlmin');
 var imagemin    	= require('gulp-imagemin');
 
 // Utilities
-var del             = require('del');
+var cache         = require('gulp-cache');
+var del           = require('del');
 var gutil       	= require('gulp-util');
 var browserSync 	= require('browser-sync');
 var gulpSequence 	= require('gulp-sequence').use(gulp);
 var shell       	= require('gulp-shell');
 var plumber     	= require('gulp-plumber');
-var swank           = require('swank');
-var pageSpeed       = require('psi');
-var ngrok           = require('ngrok');
-var color           = gutil.colors;
+var swank         = require('swank');
+var pageSpeed     = require('psi');
+var ngrok         = require('ngrok');
+var color         = gutil.colors;
 
 // ☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴☲
 
@@ -62,21 +63,21 @@ gulp.task( 'browserSync', function() {
 // ☱☲☴ Images ☱☲☴
 
 // Compress images & handle SVG files
-gulp.task('images', function(tmp) {
-	gulp.src([
-	        config.srcDir + 'images/*.jpg',
-	        config.srcDir + 'images/*.png'
-	    ])
-		.pipe(plumber())
-		.pipe(imagemin({ optimizationLevel: 5, progressive: true, interlaced: true }))
-		.pipe(gulp.dest(config.srcDir + 'images'));
+gulp.task('images', function () {
+  return gulp.src([config.srcDir + 'images/**/*.{png,jpg,svg}'])
+    .pipe(cache(imagemin({
+        optimizationLevel: 5,
+        progressive: true,
+        interlaced: true
+     })))
+    .pipe(gulp.dest('dist/images'))
 });
 
 // Compress images & handle SVG files for production
 gulp.task('images-deploy', function() {
     gulp.src([config.srcDir + 'images/**/*'])
-        .pipe(plumber())
-        .pipe(gulp.dest(config.distDir + 'images'));
+    .pipe(plumber())
+    .pipe(gulp.dest(config.distDir + 'images'));
 });
 
 
@@ -84,58 +85,58 @@ gulp.task('images-deploy', function() {
 
 // Compile JS plugins
 gulp.task('scripts', function() {
-    return gulp.src([
-            config.srcDir + 'js/plugins/*.js',
-            config.srcDir + 'js/plugins/**/*.js'
-        ])
-		.pipe(plumber())
-		.pipe(concat('plugins.js'))
-		.on('error', gutil.log)
-		.pipe(gulp.dest(config.srcDir + 'js'))
-		.pipe(browserSync.reload({stream: true}));
+  return gulp.src([
+    config.srcDir + 'js/plugins/*.js',
+    config.srcDir + 'js/plugins/**/*.js'
+  ])
+	  .pipe(plumber())
+    .pipe(concat('plugins.js'))
+    .on('error', gutil.log)
+    .pipe(gulp.dest(config.srcDir + 'js'))
+    .pipe(browserSync.reload({stream: true}));
 });
 
 // Compile JS settings
 gulp.task('scripts-settings', function() {
 	return gulp.src([
-	        config.srcDir + 'js/settings/*.js',
-            config.srcDir + 'js/settings/**/*.js'
-        ])
-		.pipe(plumber())
-		.pipe(concat('main.js'))
-		.on('error', gutil.log)
-		.pipe(gulp.dest(config.srcDir + 'js'))
-		.pipe(browserSync.reload({stream: true}));
+	  config.srcDir + 'js/settings/*.js',
+    config.srcDir + 'js/settings/**/*.js'
+  ])
+	  .pipe(plumber())
+    .pipe(concat('main.js'))
+    .on('error', gutil.log)
+    .pipe(gulp.dest(config.srcDir + 'js'))
+    .pipe(browserSync.reload({stream: true}));
 });
 
 // Compile and minimize JS plugins for deployment
 gulp.task('scripts-deploy', function() {
-    return gulp.src([
-            config.srcDir + 'js/plugins/*.js',
-            config.srcDir + 'js/plugins/**/*.js'
-        ])
-		.pipe(plumber())
-		.pipe(concat('plugins.js'))
-		.pipe(uglify())
-		.pipe(gulp.dest(config.distDir + 'js'));
+  return gulp.src([
+    config.srcDir + 'js/plugins/*.js',
+    config.srcDir + 'js/plugins/**/*.js'
+  ])
+	  .pipe(plumber())
+    .pipe(concat('plugins.js'))
+    .pipe(uglify())
+    .pipe(gulp.dest(config.distDir + 'js'));
 });
 
 // Compile and minimize JS settings for deployment
 gulp.task('scripts-settings-deploy', function() {
-    return gulp.src([
-            config.srcDir + 'js/settings/**/*.js',
-            config.srcDir + 'js/settings/**/*.js'
-        ])
-		.pipe(plumber())
-		.pipe(concat('main.js'))
-		.pipe(uglify())
-		.pipe(gulp.dest(config.distDir + 'js'));
+  return gulp.src([
+    config.srcDir + 'js/settings/**/*.js',
+    config.srcDir + 'js/settings/**/*.js'
+  ])
+	  .pipe(plumber())
+    .pipe(concat('main.js'))
+    .pipe(uglify())
+    .pipe(gulp.dest(config.distDir + 'js'));
 });
 
 // Copy vendor scripts for deployment
 gulp.task('vendor-scripts', function() {
-	gulp.src(config.srcDir + 'js/vendor/**/*.*')
-		.pipe(gulp.dest(config.distDir + 'js/vendor'));
+  gulp.src(config.srcDir + 'js/vendor/**/*.*')
+	  .pipe(gulp.dest(config.distDir + 'js/vendor'));
 });
 
 
@@ -151,31 +152,28 @@ gulp.task('styles', function() {
 		this.emit('end');
 	    }
 	}))
-	.pipe(sourceMaps.init())
-	.pipe(sass({
-		errLogToConsole: true,
-		includePaths: [
-			config.srcDir + 'css/scss/'
-		]
+	  .pipe(sourceMaps.init())
+    .pipe(sass({
+		  errLogToConsole: true,
+      includePaths: [config.srcDir + 'css/scss/']
 	}))
-	.pipe(autoprefixer(config.browserList))
-	.on('error', gutil.log)
-	.pipe(concat('style.css'))
-	.pipe(sourceMaps.write())
-	.pipe(gulp.dest(config.srcDir + 'css'))
-	.pipe(browserSync.reload({stream: true}));
+	  .pipe(autoprefixer(config.browserList))
+    .on('error', gutil.log)
+    .pipe(concat('style.css'))
+    .pipe(sourceMaps.write())
+    .pipe(gulp.dest(config.srcDir + 'css'))
+    .pipe(browserSync.reload({stream: true}));
 });
 
 //compile SCSS files for deployment
 gulp.task('styles-deploy', function() {
 	//the initializer / master SCSS file, which will just be a file that imports everything
 	return gulp.src(config.srcDir + 'css/scss/init.scss')
-	.pipe(plumber())
-	.pipe(sass({
-		includePaths: [
+	  .pipe(plumber())
+    .pipe(sass({
+		  includePaths: [
 			config.srcDir + 'css/scss',
-		]
-	}))
+		]}))
 	.pipe(autoprefixer(config.browserList))
 	.pipe(concat('style.css'))
 	.pipe(CSSnano({discardComments: {removeAll: true}}))
@@ -189,9 +187,9 @@ gulp.task('styles-deploy', function() {
 gulp.task('html', function() {
 	//Watch all HTML files and refresh when something changes
 	return gulp.src([config.srcDir + '*.html', config.srcDir + '**/*.html'])
-		.pipe(plumber())
-		.pipe(browserSync.reload({stream: true}))
-		.on('error', gutil.log);
+	  .pipe(plumber())
+    .pipe(browserSync.reload({stream: true}))
+    .on('error', gutil.log);
 });
 
 // Migrate over all HTML files for deployment
@@ -199,26 +197,26 @@ gulp.task('html-deploy', function() {
 	// Copy everything, even invisible files but …
 	// … do not copy the JS plugins & settings and the SASS files
 	gulp.src([
-	        config.srcDir + '*',
-	        config.srcDir + '**/*',
-	        config.srcDir + '.*',
-            '!' + config.srcDir + '*.html',
-            '!' + config.srcDir + '**/*.html',
-            '!' + config.srcDir + '{js/plugins,js/plugins/**}',
-            '!' + config.srcDir + '{js/settings,js/settings/**}',
-            '!' + config.srcDir + '{css/scss,css/scss/**}'
-	    ])
-		.pipe(plumber())
-		.pipe(gulp.dest(config.distDir));
+	  config.srcDir + '*',
+	  config.srcDir + '**/*',
+	  config.srcDir + '.*',
+      '!' + config.srcDir + '*.html',
+      '!' + config.srcDir + '**/*.html',
+      '!' + config.srcDir + '{js/plugins,js/plugins/**}',
+      '!' + config.srcDir + '{js/settings,js/settings/**}',
+      '!' + config.srcDir + '{css/scss,css/scss/**}'
+    ])
+    .pipe(plumber())
+    .pipe(gulp.dest(config.distDir));
 
 	// Copy and minimize all HTML Files
 	gulp.src([config.srcDir + '*.html', config.srcDir + '**/*.html'])
-		.pipe(plumber())
-		.pipe(HTMLmin({
-			collapseWhitespace: true,
-			removeComments: true,
-		}))
-		.pipe(gulp.dest(config.distDir));
+	  .pipe(plumber())
+    .pipe(HTMLmin({
+      collapseWhitespace: true,
+      removeComments: true,
+	  }))
+    .pipe(gulp.dest(config.distDir));
 
 	// Grab all font files
 	gulp.src(config.srcDir + 'fonts/**/*')
@@ -233,15 +231,13 @@ gulp.task('html-deploy', function() {
 
 // Clean the dist directory
 gulp.task('clean', function () {
-  return del([
-    config.distDir
-  ]);
+  return del([config.distDir]);
 });
 
 // Create folders using shell
 gulp.task('scaffold', function() {
 	return shell.task([
-	    'mkdir dist',
+    'mkdir dist',
 		'mkdir dist/fonts',
 		'mkdir dist/images',
 		'mkdir dist/js',
@@ -253,15 +249,15 @@ gulp.task('scaffold', function() {
 // ☱☲☴ Critical task
 // Insert render blocking CSS in index.html inline
 gulp.task('critical', function (cb) {
-    critical.generate({
-        inline: true,
-        base: 'dist/',
-        src: 'index.html',
-        dest: 'dist/index.html',
-        minify: true,
-        width: 320,
-        height: 480
-    });
+  critical.generate({
+    inline: true,
+    base: 'dist/',
+    src: 'index.html',
+    dest: 'dist/index.html',
+    minify: true,
+    width: 320,
+    height: 480
+  });
 });
 
 
@@ -269,11 +265,12 @@ gulp.task('critical', function (cb) {
 
 // Serve dist folder with swank on port 8000
 gulp.task('serve', function(cb){
-    swank({
-        watch: false,
-        path: 'dist',
-        log: false
-    }).then(function(s){
+  swank({
+    watch: false,
+    path: 'dist',
+    log: false
+  })
+  .then(function(s){
     console.log('Server running: '+s.url);
     cb();
   });
@@ -343,11 +340,11 @@ gulp.task('psi-mobile', function() {
 // sync browsers,
 // Minimize all scripts and SCSS files
 gulp.task('default', ['browserSync', 'scripts', 'scripts-settings', 'vendor-scripts', 'styles'], function() {
-    //watch all HTML, JS and CSS files and the image folder
-    gulp.watch([config.srcDir + '*.html', config.srcDir + '**/*.html', config.srcDir + '*.php', config.srcDir + '**/*.php'], ['html']);
-    gulp.watch(config.srcDir + 'css/scss/**', ['styles']);
-    gulp.watch([config.srcDir + 'js/*', config.srcDir + 'js/**/*'], ['scripts', 'scripts-settings']);
-    gulp.watch(config.srcDir + 'images/**', ['images']);
+  //watch all HTML, JS and CSS files and the image folder
+  gulp.watch([config.srcDir + '*.html', config.srcDir + '**/*.html', config.srcDir + '*.php', config.srcDir + '**/*.php'], ['html']);
+  gulp.watch(config.srcDir + 'css/scss/**', ['styles']);
+  gulp.watch([config.srcDir + 'js/*', config.srcDir + 'js/**/*'], ['scripts', 'scripts-settings']);
+  gulp.watch([config.srcDir + 'images/**/*.{png,jpg,gif,svg}'], ['images']);
 });
 
 // ☱☲☴ Production Task
