@@ -1,10 +1,14 @@
+/*☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴☲
+Main
+☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴☲*/
+
 html, body {
     height: 100%;
     }
 
 body {
-    color: white;
-    background: #2e0638;
+    color: $white;
+    background: $main;
     }
 
 .container {
@@ -20,7 +24,6 @@ body {
 }
 
 #crackpot {
-//     width: 100%;
     width: 280px;
     display: inline-block;
     vertical-align: middle;  /* vertical alignment of the inline element */
