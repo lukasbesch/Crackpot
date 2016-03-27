@@ -1,9 +1,11 @@
 body {
-	font-family: system, -apple-system, ".SFNSDisplay-Regular", "Helvetica Neue", "Lucida Grande", sans-serif;
+	font-family: Roboto Mono, system, -apple-system, ".SFNSDisplay-Regular", "Helvetica Neue", "Lucida Grande", sans-serif;
 	font-size: 16px;
 	color: #111;
 }
 
 h2 {
-  font-size: 18px;
+  margin: 0;
+  font-size: 16px;
+  text-transform: uppercase;
 }
