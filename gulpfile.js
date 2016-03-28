@@ -205,8 +205,8 @@ gulp.task('html-deploy', function() {
 	  config.srcDir + '.*',
       '!' + config.srcDir + '**/*.html',
       '!' + config.srcDir + '{js/plugins,js/plugins/**}',
-      '!' + config.srcDir + '{js/settings,js/settings/**}',
-      '!' + config.srcDir + '{css/scss,css/scss/**}'
+      '!' + config.srcDir + '{js/*.js,js/settings,js/settings/**}',
+      '!' + config.srcDir + '{css,css/**/*}'
     ])
     .pipe(plumber())
     .pipe(gulp.dest(config.distDir));
