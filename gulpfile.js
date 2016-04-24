@@ -233,19 +233,21 @@ gulp.task('html-deploy', function() {
 
 // Clean the dist directory
 gulp.task('clean', function () {
-  return del([config.distDir]);
+  return del([config.distDir + '*', config.distDir + '.*', config.distDir + '*/**']);
 });
 
 // Create folders using shell
+/*
 gulp.task('scaffold', function() {
 	return shell.task([
-    'mkdir dist',
+    'cd dist',
 		'mkdir dist/fonts',
 		'mkdir dist/images',
 		'mkdir dist/js',
 		'mkdir dist/css'
 	]);
 });
+*/
 
 
 // ☱☲☴ Critical task
@@ -353,7 +355,7 @@ gulp.task('default', ['browserSync', 'scripts', 'scripts-settings', 'vendor-scri
 // Clean dist folder
 // Minimize all the things and copy them over
 // Insert render blocking CSS inline
-gulp.task('production', gulpSequence('clean', 'scaffold', ['scripts-deploy', 'scripts-settings-deploy', 'styles-deploy', 'images-deploy', 'html-deploy'], 'critical'));
+gulp.task('production', gulpSequence('clean', /* 'scaffold',  */['scripts-deploy', 'scripts-settings-deploy', 'styles-deploy', 'images-deploy', 'html-deploy'], 'critical'));
 
 // ☱☲☴ Page Speed Insights Task
 // Start ngrok server
