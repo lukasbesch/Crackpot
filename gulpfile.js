@@ -16,6 +16,8 @@ var config        = require('./config.json');
 var gulp        	= require('gulp');
 
 // JS
+var jshint = require('gulp-jshint');
+var stylish = require('jshint-stylish');
 var concat      	= require('gulp-concat');
 var uglify      	= require('gulp-uglify');
 
@@ -52,6 +54,14 @@ var onError = function(err) {
     console.log(err);
 }
 
+
+/*
+gulp.task('lint', function() {
+  return gulp.src([config.srcDir + 'js/settings/*.js'])
+    .pipe(jshint())
+    .pipe(jshint.reporter(stylish));
+});
+*/
 
 // ☱☲☴ Setup browserSync
 
@@ -108,6 +118,8 @@ gulp.task('scripts-settings', function() {
     config.srcDir + 'js/settings/**/*.js'
   ])
 	  .pipe(plumber())
+	  .pipe(jshint())
+    .pipe(jshint.reporter(stylish))
     .pipe(concat('main.js'))
     .on('error', gutil.log)
     .pipe(gulp.dest(config.srcDir + 'js'))
@@ -131,6 +143,8 @@ gulp.task('scripts-settings-deploy', function() {
     config.srcDir + 'js/settings/**/*.js'
   ])
 	  .pipe(plumber())
+    .pipe(jshint())
+    .pipe(jshint.reporter(stylish))
     .pipe(concat('main.js'))
     .pipe(uglify())
     .pipe(gulp.dest(config.distDir + 'js'));
@@ -150,9 +164,9 @@ gulp.task('styles', function() {
 	// The master SCSS file that imports everything
 	return gulp.src(config.srcDir + 'css/scss/init.scss')
     .pipe(plumber({
-		errorHandler: function (err) {
+		  errorHandler: function (err) {
         console.log(err);
-		this.emit('end');
+        this.emit('end');
 	    }
 	}))
 	  .pipe(sourceMaps.init())
@@ -236,8 +250,7 @@ gulp.task('clean', function () {
   return del([config.distDir + '*', config.distDir + '.*', config.distDir + '*/**']);
 });
 
-// Create folders using shell
-/*
+// Create folders in dist directory using shell
 gulp.task('scaffold', function() {
 	return shell.task([
     'cd dist',
@@ -247,7 +260,6 @@ gulp.task('scaffold', function() {
 		'mkdir dist/css'
 	]);
 });
-*/
 
 
 // ☱☲☴ Critical task
@@ -337,25 +349,32 @@ gulp.task('psi-mobile', function() {
 });
 
 
+gulp.task('watch', function() {
+  //watch all HTML, JS and CSS files and the image folder
+  gulp.watch([config.srcDir + '**/*.html', config.srcDir + '**/*.php'], ['html']);
+  gulp.watch(config.srcDir + 'css/scss/**', ['styles']);
+  gulp.watch(config.srcDir + 'js/plugins/**/*', ['scripts']);
+  gulp.watch(config.srcDir + 'js/settings/**/*', ['scripts-settings']);
+//   gulp.watch(config.srcDir + 'js/settings/*.js', ['lint']);
+  gulp.watch([config.srcDir + 'images/**/*.{png,jpg,gif,svg}'], ['images']);
+
+
+});
+
+
 // ☱☲☴☲☱☲☴ Gulp tasks ☱☲☴☲☱☲☴
 
 // ☱☲☴ Master Task
 // Start web server,
 // sync browsers,
 // Minimize all scripts and SCSS files
-gulp.task('default', ['browserSync', 'scripts', 'scripts-settings', 'vendor-scripts', 'styles'], function() {
-  //watch all HTML, JS and CSS files and the image folder
-  gulp.watch([config.srcDir + '**/*.html', config.srcDir + '**/*.php'], ['html']);
-  gulp.watch(config.srcDir + 'css/scss/**', ['styles']);
-  gulp.watch(config.srcDir + 'js/**/*', ['scripts', 'scripts-settings']);
-  gulp.watch([config.srcDir + 'images/**/*.{png,jpg,gif,svg}'], ['images']);
-});
+gulp.task('default', ['browserSync', 'scripts', 'scripts-settings', 'vendor-scripts', 'styles', 'images', 'watch']);
 
 // ☱☲☴ Production Task
 // Clean dist folder
 // Minimize all the things and copy them over
 // Insert render blocking CSS inline
-gulp.task('production', gulpSequence('clean', /* 'scaffold',  */['scripts-deploy', 'scripts-settings-deploy', 'styles-deploy', 'images-deploy', 'html-deploy'], 'critical'));
+gulp.task('production', gulpSequence('clean', 'scaffold', ['scripts-deploy', 'scripts-settings-deploy', 'styles-deploy', 'images-deploy', 'html-deploy'], 'critical'));
 
 // ☱☲☴ Page Speed Insights Task
 // Start ngrok server
