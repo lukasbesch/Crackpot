@@ -194,13 +194,15 @@ gulp.task('styles-production', function() {
 // ☱☲☴ HTML
 
 // Watch all HTML files
+
 gulp.task('html', function() {
-	//Watch all HTML files and refresh when something changes
+//Watch all HTML files and refresh when something changes
 	return gulp.src([config.srcDir + '**/*.html'])
 	  .pipe(plumber())
     .pipe(browserSync.reload({stream: true}))
     .on('error', gutil.log);
 });
+
 
 // Migrate over all HTML files for deployment
 gulp.task('html-production', function() {
@@ -345,7 +347,9 @@ gulp.task('psi-mobile', function() {
 
 gulp.task('watch', function() {
   //watch all HTML, JS and CSS files and the image folder
-  gulp.watch([config.srcDir + '**/*.html', config.srcDir + '**/*.php'], ['html']);
+//   gulp.watch([config.srcDir + '**/*.html', config.srcDir + '**/*.php'], browserSync.reload);
+ gulp.watch([config.srcDir + '**/*.html', config.srcDir + '**/*.php'], ['html'], browserSync.reload);
+// This always reports changes in multiple files wtf?
   gulp.watch(config.srcDir + 'css/scss/**', ['styles']);
   gulp.watch(config.srcDir + 'js/plugins/**/*', ['scripts']);
   gulp.watch(config.srcDir + 'js/settings/**/*', ['scripts-settings']);
@@ -360,7 +364,10 @@ gulp.task('watch', function() {
 // sync browsers,
 // compress all images,
 // concat all scripts and SCSS files
-gulp.task('default', ['browserSync', 'scripts', 'scripts-settings', 'vendor-scripts', 'styles', 'images', 'watch']);
+gulp.task('default', gulpSequence('scripts', 'scripts-settings', 'vendor-scripts', 'styles', 'images', ['browserSync', 'watch']));
+
+
+// gulp.task('production', gulpSequence('clean', 'scaffold', ['scripts-production', 'scripts-settings-production', 'styles-production', 'images-production', 'html-production'], 'critical'));
 
 // ☱☲☴ Production Task
 // Clean dist folder
@@ -368,7 +375,7 @@ gulp.task('default', ['browserSync', 'scripts', 'scripts-settings', 'vendor-scri
 // Insert render blocking CSS inline
 // Notify when finished
 gulp.task('production', function (cb) {
-  gulpSequence('clean', 'scaffold', ['scripts-deploy', 'scripts-settings-production', 'styles-production', 'images-production', 'html-production'], 'critical')(cb);
+  gulpSequence('clean', 'scaffold', ['scripts-production', 'scripts-settings-production', 'styles-production', 'images-production', 'html-production'], 'critical')(cb);
 });
 
 gulp.task('build', ['production'], function () {
