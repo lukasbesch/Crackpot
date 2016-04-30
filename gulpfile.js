@@ -2,22 +2,20 @@
 
               C R A C K P O T
 
-☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴☲*/
+☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴*/
 
 
 // Project variables
 
 var config        = require('./config.json');
 
-//
-// Dependencies
-//
+//// Dependencies ////
 
 var gulp        	= require('gulp');
 
 // JS
-var jshint = require('gulp-jshint');
-var stylish = require('jshint-stylish');
+var jshint        = require('gulp-jshint');
+var stylish       = require('jshint-stylish');
 var concat      	= require('gulp-concat');
 var uglify      	= require('gulp-uglify');
 
@@ -44,8 +42,10 @@ var swank         = require('swank');
 var pageSpeed     = require('psi');
 var ngrok         = require('ngrok');
 var color         = gutil.colors;
+var notifier      = require('node-notifier');
+var path          = require('path');
 
-// ☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴☲
+// ☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴☲☱☲
 
 
 // ☱☲☴ Error log
@@ -54,14 +54,6 @@ var onError = function(err) {
     console.log(err);
 }
 
-
-/*
-gulp.task('lint', function() {
-  return gulp.src([config.srcDir + 'js/settings/*.js'])
-    .pipe(jshint())
-    .pipe(jshint.reporter(stylish));
-});
-*/
 
 // ☱☲☴ Setup browserSync
 
@@ -77,7 +69,7 @@ gulp.task( 'browserSync', function() {
 });
 
 
-// ☱☲☴ Images ☱☲☴
+// ☱☲☴ Images
 
 // Compress images & handle SVG files
 gulp.task('images', function () {
@@ -87,18 +79,18 @@ gulp.task('images', function () {
         progressive: true,
         interlaced: true
      })))
-    .pipe(gulp.dest('dist/images'))
+    .pipe(gulp.dest(config.srcDir + 'images'))
 });
 
-// Compress images & handle SVG files for production
-gulp.task('images-deploy', function() {
+// Copy images for production
+gulp.task('images-production', function() {
     gulp.src([config.srcDir + 'images/**/*'])
     .pipe(plumber())
     .pipe(gulp.dest(config.distDir + 'images'));
 });
 
 
-// ☱☲☴ JS ☱☲☴
+// ☱☲☴ JS
 
 // Compile JS plugins
 gulp.task('scripts', function() {
@@ -118,6 +110,7 @@ gulp.task('scripts-settings', function() {
     config.srcDir + 'js/settings/**/*.js'
   ])
 	  .pipe(plumber())
+	  // Lint JS files and report errors
 	  .pipe(jshint())
     .pipe(jshint.reporter(stylish))
     .pipe(concat('main.js'))
@@ -127,7 +120,7 @@ gulp.task('scripts-settings', function() {
 });
 
 // Compile and minimize JS plugins for deployment
-gulp.task('scripts-deploy', function() {
+gulp.task('scripts-production', function() {
   return gulp.src([
     config.srcDir + 'js/plugins/**/*.js'
   ])
@@ -138,7 +131,7 @@ gulp.task('scripts-deploy', function() {
 });
 
 // Compile and minimize JS settings for deployment
-gulp.task('scripts-settings-deploy', function() {
+gulp.task('scripts-settings-production', function() {
   return gulp.src([
     config.srcDir + 'js/settings/**/*.js'
   ])
@@ -157,7 +150,7 @@ gulp.task('vendor-scripts', function() {
 });
 
 
-// ☱☲☴ CSS ☱☲☴
+// ☱☲☴ CSS
 
 // Compile SCSS files
 gulp.task('styles', function() {
@@ -183,7 +176,7 @@ gulp.task('styles', function() {
 });
 
 //compile SCSS files for deployment
-gulp.task('styles-deploy', function() {
+gulp.task('styles-production', function() {
 	// The master SCSS file that imports everything
 	return gulp.src(config.srcDir + 'css/scss/init.scss')
 	  .pipe(plumber())
@@ -198,7 +191,7 @@ gulp.task('styles-deploy', function() {
 });
 
 
-// ☱☲☴ HTML ☱☲☴
+// ☱☲☴ HTML
 
 // Watch all HTML files
 gulp.task('html', function() {
@@ -210,7 +203,7 @@ gulp.task('html', function() {
 });
 
 // Migrate over all HTML files for deployment
-gulp.task('html-deploy', function() {
+gulp.task('html-production', function() {
 	// Copy everything, even invisible files but …
 	// … do not copy the JS plugins & settings and the SASS files
 	gulp.src([
@@ -225,7 +218,7 @@ gulp.task('html-deploy', function() {
     .pipe(plumber())
     .pipe(gulp.dest(config.distDir));
 
-	// Copy and minimize all HTML Files
+// Copy and minimize all HTML Files
 	gulp.src([config.srcDir + '**/*.html'])
 	  .pipe(plumber())
     .pipe(HTMLmin({
@@ -234,12 +227,12 @@ gulp.task('html-deploy', function() {
 	  }))
     .pipe(gulp.dest(config.distDir));
 
-	// Grab all font files
+// Grab all font files
 	gulp.src(config.srcDir + 'fonts/**/*')
 		.pipe(plumber())
 		.pipe(gulp.dest(config.distDir + 'fonts'));
 
-	// Grab all styles
+// Grab all styles
 	gulp.src([config.srcDir + 'css/*.css', '!' + config.srcDir + 'css/style.css'])
 		.pipe(plumber())
 		.pipe(gulp.dest(config.distDir + 'css'));
@@ -265,7 +258,7 @@ gulp.task('scaffold', function() {
 // ☱☲☴ Critical task
 // Insert render blocking CSS in index.html inline
 gulp.task('critical', function (cb) {
-  critical.generate({
+  return critical.generate({
     inline: true,
     base: 'dist/',
     src: 'index.html',
@@ -277,7 +270,7 @@ gulp.task('critical', function (cb) {
 });
 
 
-// ☱☲☴ Pagespeed Insights ☱☲☴
+// ☱☲☴ Pagespeed Insights
 
 // Serve dist folder with swank on port 8000
 gulp.task('serve', function(cb){
@@ -304,7 +297,6 @@ gulp.task('serve', function(cb){
 //
 // http://tldp.org/LDP/abs/html/exit-status.html
 // -----------------------------------------------------------------------------
-
 
 // PageSpeed task for desktop score
 gulp.task('psi-desktop', function() {
@@ -349,32 +341,48 @@ gulp.task('psi-mobile', function() {
 });
 
 
+// ☱☲☴ The watcher
+
 gulp.task('watch', function() {
   //watch all HTML, JS and CSS files and the image folder
   gulp.watch([config.srcDir + '**/*.html', config.srcDir + '**/*.php'], ['html']);
   gulp.watch(config.srcDir + 'css/scss/**', ['styles']);
   gulp.watch(config.srcDir + 'js/plugins/**/*', ['scripts']);
   gulp.watch(config.srcDir + 'js/settings/**/*', ['scripts-settings']);
-//   gulp.watch(config.srcDir + 'js/settings/*.js', ['lint']);
   gulp.watch([config.srcDir + 'images/**/*.{png,jpg,gif,svg}'], ['images']);
-
-
 });
 
 
 // ☱☲☴☲☱☲☴ Gulp tasks ☱☲☴☲☱☲☴
 
-// ☱☲☴ Master Task
+// ☱☲☴ Spark Master Task
 // Start web server,
 // sync browsers,
-// Minimize all scripts and SCSS files
+// compress all images,
+// concat all scripts and SCSS files
 gulp.task('default', ['browserSync', 'scripts', 'scripts-settings', 'vendor-scripts', 'styles', 'images', 'watch']);
 
 // ☱☲☴ Production Task
 // Clean dist folder
 // Minimize all the things and copy them over
 // Insert render blocking CSS inline
-gulp.task('production', gulpSequence('clean', 'scaffold', ['scripts-deploy', 'scripts-settings-deploy', 'styles-deploy', 'images-deploy', 'html-deploy'], 'critical'));
+// Notify when finished
+gulp.task('production', function (cb) {
+  gulpSequence('clean', 'scaffold', ['scripts-deploy', 'scripts-settings-production', 'styles-production', 'images-production', 'html-production'], 'critical')(cb);
+});
+
+gulp.task('build', ['production'], function () {
+  return gulp.src('gulpfile.js')
+    .pipe(notifier.notify({
+      title: 'Crackpot',
+      subtitle: 'Site built in',
+      message: config.distURL,
+      open: config.distURL,
+      icon: path.join(__dirname, 'app/images/favicon/favicon.png')
+    }))
+    .on('end', function(){ gutil.log('Done!'); });
+});
+
 
 // ☱☲☴ Page Speed Insights Task
 // Start ngrok server

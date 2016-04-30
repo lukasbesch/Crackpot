@@ -17,7 +17,7 @@
     "del": "^2.2.0",
     "gulp": "^3.9.1",
     "gulp-autoprefixer": "^3.1.0",
-    "gulp-cache": "^0.4.3",
+    "gulp-cache": "^0.4.4",
     "gulp-concat": "^2.6.0",
     "gulp-cssnano": "^2.1.1",
     "gulp-gzip": "^1.2.0",
@@ -34,6 +34,8 @@
     "jshint": "^2.9.2",
     "jshint-stylish": "^2.1.0",
     "ngrok": "^2.1.6",
+    "node-notifier": "^4.5.0",
+    "path": "^0.12.7",
     "psi": "^2.0.3",
     "swank": "^1.2.0"
   }
