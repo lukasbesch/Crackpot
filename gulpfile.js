@@ -18,7 +18,7 @@ var jshint        = require('gulp-jshint');
 var stylish       = require('jshint-stylish');
 var concat      	= require('gulp-concat');
 var uglify      	= require('gulp-uglify');
-
+var useref        = require('gulp-useref');
 // CSS
 var sass        	= require('gulp-sass');
 var sourceMaps  	= require('gulp-sourcemaps');
@@ -44,6 +44,7 @@ var ngrok         = require('ngrok');
 var color         = gutil.colors;
 var notifier      = require('node-notifier');
 var path          = require('path');
+var gulpIf        = require('gulp-if')
 
 // ☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴☲☱☲
 
@@ -106,9 +107,7 @@ gulp.task('scripts', function() {
 
 // Compile JS settings
 gulp.task('scripts-settings', function() {
-	return gulp.src([
-    config.srcDir + 'js/settings/**/*.js'
-  ])
+	return gulp.src([config.srcDir + 'js/settings/**/*.js'])
 	  .pipe(plumber())
 	  // Lint JS files and report errors
 	  .pipe(jshint())
@@ -121,27 +120,34 @@ gulp.task('scripts-settings', function() {
 
 // Compile and minimize JS plugins for deployment
 gulp.task('scripts-production', function() {
-  return gulp.src([
-    config.srcDir + 'js/plugins/**/*.js'
-  ])
+  return gulp.src([config.srcDir + 'js/plugins/**/*.js'])
 	  .pipe(plumber())
     .pipe(concat('plugins.js'))
-    .pipe(uglify())
+//     .pipe(uglify())
     .pipe(gulp.dest(config.distDir + 'js'));
 });
 
 // Compile and minimize JS settings for deployment
 gulp.task('scripts-settings-production', function() {
-  return gulp.src([
-    config.srcDir + 'js/settings/**/*.js'
-  ])
+  return gulp.src([config.srcDir + 'js/settings/**/*.js'])
 	  .pipe(plumber())
     .pipe(jshint())
     .pipe(jshint.reporter(stylish))
     .pipe(concat('main.js'))
-    .pipe(uglify())
+//     .pipe(uglify())
     .pipe(gulp.dest(config.distDir + 'js'));
 });
+
+
+// Combine JS files into one file
+gulp.task('useref', function(){
+  return gulp.src(config.srcDir + '/**/*.html')
+    .pipe(useref())
+    // Minifies only if it's a JavaScript file
+    .pipe(gulpIf('*.js', uglify()))
+    .pipe(gulp.dest(config.distDir));
+});
+
 
 // Copy vendor scripts for deployment
 gulp.task('vendor-scripts', function() {
@@ -223,10 +229,23 @@ gulp.task('html-production', function() {
 // Copy and minimize all HTML Files
 	gulp.src([config.srcDir + '**/*.html'])
 	  .pipe(plumber())
-    .pipe(HTMLmin({
+/*
+    .pipe(gulpIf('*.html', HTMLmin({
       collapseWhitespace: true,
       removeComments: true,
 	  }))
+*/
+	  .pipe(useref())
+    // Minifies only if it's a JavaScript file
+    .pipe(gulpIf('*.html', HTMLmin({
+      collapseWhitespace: true,
+      removeComments: true,
+	  })))
+
+
+    .pipe(useref())
+    .pipe(gulpIf('*.js', uglify()))
+//         .pipe(htmlmin({collapseWhitespace: true}))
     .pipe(gulp.dest(config.distDir));
 
 // Grab all font files
@@ -367,8 +386,6 @@ gulp.task('watch', function() {
 gulp.task('default', gulpSequence('scripts', 'scripts-settings', 'vendor-scripts', 'styles', 'images', ['browserSync', 'watch']));
 
 
-// gulp.task('production', gulpSequence('clean', 'scaffold', ['scripts-production', 'scripts-settings-production', 'styles-production', 'images-production', 'html-production'], 'critical'));
-
 // ☱☲☴ Production Task
 // Clean dist folder
 // Minimize all the things and copy them over
@@ -377,6 +394,12 @@ gulp.task('default', gulpSequence('scripts', 'scripts-settings', 'vendor-scripts
 gulp.task('production', function (cb) {
   gulpSequence('clean', 'scaffold', ['scripts-production', 'scripts-settings-production', 'styles-production', 'images-production', 'html-production'], 'critical')(cb);
 });
+
+/*
+gulp.task('production', function (cb) {
+  gulpSequence('clean', 'scaffold', ['styles-production', 'images-production', 'html-production'], 'useref', 'critical')(cb);
+});
+*/
 
 gulp.task('build', ['production'], function () {
   return gulp.src('gulpfile.js')
