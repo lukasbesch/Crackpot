@@ -7,7 +7,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Description goes here, should at least 50 characters">
+    <meta name="description" content="Description goes here, should be at least 50 characters">
     <meta name="keywords" content="Who needs keywords?">
     <meta name="author" content="theOfficial">
     <meta name="googlebot" content="index,follow">
@@ -48,10 +48,11 @@
     <script src="https://code.jquery.com/jquery-2.1.0.min.js"></script>
     <script>window.jQuery || document.write('<script src="../js/vendor/jquery-2.1.0.min.js"><\/script>')</script>
     <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.5.18/webfont.js"></script>
-    <!-- build:js ../js/main.min.js -->
-    <script src="../js/vendor/modernizr-2.7.1.min.js"></script>
-    <script src="../js/plugins.js"></script>
-    <script src="../js/main.js"></script>
+    <!-- build:js js/main.min.js -->
+    <!-- inject:js -->
+    <script src="../js/plugins/bootstrap.min.js"></script>
+    <script src="../js/settings/google-fonts.js"></script>
+    <!-- endinject -->
     <!-- endbuild -->
     <script>
       !function(C,R,A,K,P,O,T){C.GoogleAnalyticsObject=A;C[A]||(C[A]=function(){
