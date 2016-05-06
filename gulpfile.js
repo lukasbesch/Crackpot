@@ -4,7 +4,7 @@
 
 ☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴*/
 
-'use strict';
+"use strict";
 
 // Project variables
 
@@ -22,7 +22,7 @@ var uglify      	= require('gulp-uglify');
 
 // CSS
 var autoprefixer 	= require('gulp-autoprefixer');
-var critical      = require('critical');
+var critical      = require('critical').stream;
 var sass        	= require('gulp-sass');
 var sourceMaps  	= require('gulp-sourcemaps');
 
@@ -35,7 +35,7 @@ var imagemin    	= require('gulp-imagemin');
 var cache         = require('gulp-cache');
 var del           = require('del');
 var gutil       	= require('gulp-util');
-var sequence     	= require('gulp-sequence').use(gulp);
+var gulpSequence  = require('gulp-sequence').use(gulp);
 var gulpIf        = require('gulp-if');
 var inject        = require('gulp-inject');
 var plumber     	= require('gulp-plumber');
@@ -120,32 +120,30 @@ gulp.task('scripts-inject', function(){
       '!' + config.srcDir + 'js/vendor/**/*jquery*.js',
       '!' + config.srcDir + 'js/vendor/**/*modernizr*.js'],{read: false}), {relative: true}))
     .pipe(gulp.dest(config.srcDir));
- });
-
+});
 
 // ☱☲☴ CSS
-
 // Compile SCSS files
 gulp.task('styles', function() {
 	// The master SCSS file that imports everything
 	return gulp.src(config.srcDir + 'css/scss/init.scss')
-    .pipe(plumber({
+   .pipe(plumber({
 		  errorHandler: function (err) {
-        console.log(err);
-        this.emit('end');
+       console.log(err);
+       this.emit('end');
 	    }
 	}))
 	  .pipe(sourceMaps.init())
-    .pipe(sass({
+   .pipe(sass({
 		  errLogToConsole: true,
-      includePaths: [config.srcDir + 'css/scss/']
+     includePaths: [config.srcDir + 'css/scss/']
 	}))
 	  .pipe(autoprefixer(config.browserList))
-    .on('error', gutil.log)
-    .pipe(concat('style.css'))
-    .pipe(sourceMaps.write())
-    .pipe(gulp.dest(config.srcDir + 'css'))
-    .pipe(browserSync.reload({stream: true}));
+   .on('error', gutil.log)
+   .pipe(concat('style.css'))
+   .pipe(sourceMaps.write())
+   .pipe(gulp.dest(config.srcDir + 'css'))
+   .pipe(browserSync.reload({stream: true}));
 });
 
 // Compile and minify SCSS files for production
@@ -153,7 +151,7 @@ gulp.task('styles-production', function() {
 	// The master SCSS file that imports everything
 	return gulp.src(config.srcDir + 'css/scss/init.scss')
 	  .pipe(plumber())
-    .pipe(sass({
+   .pipe(sass({
 		  includePaths: [
 			config.srcDir + 'css/scss',
 		]}))
@@ -167,56 +165,56 @@ gulp.task('styles-production', function() {
 // ☱☲☴ HTML
 
 // Watch all HTML files
-
 gulp.task('html', function() {
 //Watch all HTML files and refresh when something changes
 	return gulp.src([config.srcDir + '**/*.html'])
 	  .pipe(plumber())
-    .pipe(browserSync.reload({stream: true}))
-    .on('error', gutil.log);
+   .pipe(browserSync.reload({stream: true}))
+   .on('error', gutil.log);
 });
 
-
 // ☱☲☴ Production
-
 gulp.task('migrate', function() {
 	// Copy everything, even invisible files but …
 	// … do not copy the JS plugins & settings and the SASS files
 	gulp.src([
-	  config.srcDir + '**/*',
-      '!' + config.srcDir + '**/*.html',
-      '!' + config.srcDir + '{js/plugins,js/plugins/**}',
-      '!' + config.srcDir + '{js/*.js,js/settings,js/settings/**}',
-      '!' + config.srcDir + '{css/style.css,css/scss,css/scss/**}'
-    ])
-    .pipe(plumber())
-    .pipe(gulp.dest(config.distDir));
-
-  // Concatenate and inject a minified JS file
-  gulp.src([config.srcDir + '**/*.html'])
-    .pipe(plumber())
-    .pipe(useref())
-    // Minify only JS files
-    .pipe(gulpIf('*.js', uglify()))
-    .pipe(gulp.dest(config.distDir));
+	  config.srcDir + '**/*', config.srcDir + '**/.*',
+     '!' + config.srcDir + '**/*.html',
+     '!' + config.srcDir + '{js/plugins,js/plugins/**}',
+     '!' + config.srcDir + '{js/*.js,js/settings,js/settings/**}',
+     '!' + config.srcDir + '{css/style.css,css/scss,css/scss/**}'
+   ])
+   .pipe(plumber())
+   .pipe(gulp.dest(config.distDir));
+ // Concatenate and inject a minified JS file
+ gulp.src([config.srcDir + '**/*.html'])
+   .pipe(plumber())
+   .pipe(useref())
+   // Minify only JS files
+   .pipe(gulpIf('*.js', uglify()))
+   .pipe(gulp.dest(config.distDir));
 });
 
 // Minify HTML
 gulp.task('html-min', function() {
-  return gulp.src(config.distDir + '**/*.html')
-    .pipe(HTMLmin({collapseWhitespace: true}))
-    .pipe(gulp.dest(config.distDir));
+ return gulp.src(config.distDir + '**/*.html')
+   .pipe(HTMLmin({
+     collapseWhitespace: true,
+     processConditionalComments: true,
+     minifyJS: true
+   }))
+   .pipe(gulp.dest(config.distDir));
 });
 
 // Clean the dist directory
 gulp.task('clean', function () {
-  return del([config.distDir + '*', config.distDir + '.*', config.distDir + '*/**']);
+ return del([config.distDir + '*', config.distDir + '.*', config.distDir + '*/**']);
 });
 
 // Create folders in dist directory using shell
 gulp.task('scaffold', function() {
 	return shell.task([
-    'cd dist',
+   'cd dist',
 		'mkdir dist/fonts',
 		'mkdir dist/images',
 		'mkdir dist/js',
@@ -224,18 +222,27 @@ gulp.task('scaffold', function() {
 	]);
 });
 
+gulp.task('shorthand', shell.task([
+  'echo hello',
+  'echo world',
+  'mkdir dist/fonts',
+  'mkdir dist/images',
+  'mkdir dist/js',
+  'mkdir dist/css'
+]));
+
 // ☱☲☴ Critical
 // Insert render blocking CSS in index.html inline
-gulp.task('critical', function (cb) {
-  return critical.generate({
-    inline: true,
-    base: 'dist/',
-    src: 'index.html',
-    dest: 'dist/index.html',
-    minify: true,
-    width: 320,
-    height: 480
-  });
+gulp.task('critical', function () {
+  return gulp.src(config.distDir + '**/*.html')
+  .pipe(critical({
+   inline: true,
+   base: 'dist/',
+   minify: true,
+   width: 320,
+   height: 480
+ }))
+ .pipe(gulp.dest(config.distDir));
 });
 
 
@@ -243,15 +250,15 @@ gulp.task('critical', function (cb) {
 
 // Serve dist folder with swank on port 8000
 gulp.task('serve', function(cb){
-  swank({
-    watch: false,
-    path: 'dist',
-    log: false
-  })
-  .then(function(s){
-    console.log('Server running: '+s.url);
-    cb();
-  });
+ swank({
+   watch: false,
+   path: 'dist',
+   log: false
+ })
+ .then(function(s){
+   console.log('Server running: '+s.url);
+   cb();
+ });
 });
 
 // -----------------------------------------------------------------------------
@@ -269,44 +276,44 @@ gulp.task('serve', function(cb){
 
 // PageSpeed task for desktop score
 gulp.task('psi-desktop', function() {
-  // Set up a public tunnel so PageSpeed can see the local site.
-  return ngrok.connect(8000, function (err_ngrok, url) {
-    console.log(color.blue('ngrok'), '- serving your site from', color.black.bgBlue(url));
-    // Run PageSpeed once the tunnel is up.
-    pageSpeed.output(url, {
-      strategy: ['desktop'],
-      threshold: 80
-    }, function (err_psi, data) {
-      // Log any potential errors and return a FAILURE.
-      if (err_psi) {
-        log(err_psi);
-        process.exit(1);
-      }
-      // Kill the ngrok tunnel and return SUCCESS.
-      process.exit(0);
-    });
-  });
+ // Set up a public tunnel so PageSpeed can see the local site.
+ return ngrok.connect(8000, function (err_ngrok, url) {
+   console.log(color.blue('ngrok'), '- serving your site from', color.black.bgBlue(url));
+   // Run PageSpeed once the tunnel is up.
+   pageSpeed.output(url, {
+     strategy: ['desktop'],
+     threshold: 80
+   }, function (err_psi, data) {
+     // Log any potential errors and return a FAILURE.
+     if (err_psi) {
+       log(err_psi);
+       process.exit(1);
+     }
+     // Kill the ngrok tunnel and return SUCCESS.
+     process.exit(0);
+   });
+ });
 });
 
 // PageSpeed task for mobile score
 gulp.task('psi-mobile', function() {
-  // Set up a public tunnel so PageSpeed can see the local site.
-  return ngrok.connect(8000, function (err_ngrok, url) {
-    console.log(color.blue('ngrok'), '- serving your site from', color.black.bgBlue(url));
-    // Run PageSpeed once the tunnel is up.
-    pageSpeed.output(url, {
-      strategy: ['mobile'],
-      threshold: 80
-    }, function (err_psi, data) {
-      // Log any potential errors and return a FAILURE.
-      if (err_psi) {
-        log(err_psi);
-        process.exit(1);
-      }
-      // Kill the ngrok tunnel and return SUCCESS.
-      process.exit(0);
-    });
-  });
+ // Set up a public tunnel so PageSpeed can see the local site.
+ return ngrok.connect(8000, function (err_ngrok, url) {
+   console.log(color.blue('ngrok'), '- serving your site from', color.black.bgBlue(url));
+   // Run PageSpeed once the tunnel is up.
+   pageSpeed.output(url, {
+     strategy: ['mobile'],
+     threshold: 80
+   }, function (err_psi, data) {
+     // Log any potential errors and return a FAILURE.
+     if (err_psi) {
+       log(err_psi);
+       process.exit(1);
+     }
+     // Kill the ngrok tunnel and return SUCCESS.
+     process.exit(0);
+   });
+ });
 });
 
 
@@ -315,10 +322,10 @@ gulp.task('psi-mobile', function() {
 gulp.task('watch', function() {
 // watch all HTML, JS and CSS files and the image folder
 // This always reports changes in multiple files wtf?
-  gulp.watch([config.srcDir + '**/*.html', config.srcDir + '**/*.php'], ['html'], browserSync.reload);
-  gulp.watch(config.srcDir + 'css/scss/**', ['styles']);
-  gulp.watch([config.srcDir + 'js/plugins/**/*', config.srcDir + 'js/settings/**/*'], ['scripts-inject', 'js-lint']);
-  gulp.watch([config.srcDir + 'images/**/*.{png,jpg,gif,svg}'], ['images']);
+ gulp.watch([config.srcDir + '**/*.html', config.srcDir + '**/*.php'], ['html'], browserSync.reload);
+ gulp.watch(config.srcDir + 'css/scss/**', ['styles']);
+ gulp.watch([config.srcDir + 'js/plugins/**/*', config.srcDir + 'js/settings/**/*'], ['scripts-inject', 'js-lint']);
+ gulp.watch([config.srcDir + 'images/**/*.{png,jpg,gif,svg}'], ['images']);
 });
 
 
@@ -331,7 +338,7 @@ gulp.task('watch', function() {
 // inject scripts,
 // handle SCSS files
 
-gulp.task('default', sequence(['scripts-inject', 'styles', 'images'], ['browserSync', 'watch']));
+gulp.task('default', gulpSequence(['scripts-inject', 'styles', 'images'], ['browserSync', 'watch']));
 
 
 // ☱☲☴ Build Task
@@ -344,7 +351,7 @@ gulp.task('default', sequence(['scripts-inject', 'styles', 'images'], ['browserS
 // notify when finished
 
 gulp.task('production', function (cb) {
-  sequence('clean', 'scaffold', ['styles-production', 'images-production', 'migrate'], 'critical','html-min')(cb);
+  gulpSequence('clean', 'scaffold', ['styles-production', 'images-production', 'migrate'], 'critical','html-min')(cb);
 });
 
 gulp.task('build', ['production'], function () {
@@ -356,12 +363,11 @@ gulp.task('build', ['production'], function () {
       open: config.distURL,
       icon: path.join(__dirname, 'app/images/favicon/favicon.png')
     }))
-    .on('end', function(){ gutil.log('Done!'); });
 });
 
 
 // ☱☲☴ Page Speed Insights Task
 // Start ngrok server
 // Run PSI on tunnel URL
-gulp.task('mobile', sequence('serve', 'psi-mobile'));
-gulp.task('desktop', sequence('serve', 'psi-desktop'));
+gulp.task('mobile', gulpSequence('serve', 'psi-mobile'));
+gulp.task('desktop', gulpSequence('serve', 'psi-desktop'));
