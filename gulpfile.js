@@ -4,6 +4,7 @@
 
 ☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴*/
 
+"use strict";
 
 // Project variables
 
@@ -14,16 +15,16 @@ var config        = require('./config.json');
 var gulp        	= require('gulp');
 
 // JS
+var concat      	= require('gulp-concat');
 var jshint        = require('gulp-jshint');
 var stylish       = require('jshint-stylish');
-var concat      	= require('gulp-concat');
 var uglify      	= require('gulp-uglify');
 
 // CSS
+var autoprefixer 	= require('gulp-autoprefixer');
+var critical      = require('critical').stream;
 var sass        	= require('gulp-sass');
 var sourceMaps  	= require('gulp-sourcemaps');
-var autoprefixer 	= require('gulp-autoprefixer');
-var critical      = require('critical');
 
 // Min
 var CSSnano   		= require('gulp-cssnano');
@@ -34,16 +35,20 @@ var imagemin    	= require('gulp-imagemin');
 var cache         = require('gulp-cache');
 var del           = require('del');
 var gutil       	= require('gulp-util');
-var browserSync 	= require('browser-sync');
-var gulpSequence 	= require('gulp-sequence').use(gulp);
-var shell       	= require('gulp-shell');
+var gulpSequence  = require('gulp-sequence').use(gulp);
+var gulpIf        = require('gulp-if');
+var inject        = require('gulp-inject');
 var plumber     	= require('gulp-plumber');
-var swank         = require('swank');
-var pageSpeed     = require('psi');
-var ngrok         = require('ngrok');
+var shell       	= require('gulp-shell');
+var useref        = require('gulp-useref');
+
+var browserSync 	= require('browser-sync');
 var color         = gutil.colors;
+var ngrok         = require('ngrok');
 var notifier      = require('node-notifier');
 var path          = require('path');
+var pageSpeed     = require('psi');
+var swank         = require('swank');
 
 // ☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴☲☱☲☴☲☱☲
 
@@ -58,14 +63,14 @@ var onError = function(err) {
 // ☱☲☴ Setup browserSync
 
 gulp.task( 'browserSync', function() {
-    browserSync.init( {
-        //open: true,
+  browserSync.init( {
+    //open: true,
 		server: {baseDir: config.srcDir},
-        options: {
-		    reloadDelay: 250
-	    },
-        browser: "google chrome"
-    });
+      options: {
+      reloadDelay: 250
+    },
+    browser: "google chrome"
+  });
 });
 
 
@@ -79,108 +84,74 @@ gulp.task('images', function () {
         progressive: true,
         interlaced: true
      })))
-    .pipe(gulp.dest(config.srcDir + 'images'))
+    .pipe(gulp.dest(config.srcDir + 'images'));
 });
 
 // Copy images for production
 gulp.task('images-production', function() {
-    gulp.src([config.srcDir + 'images/**/*'])
-    .pipe(plumber())
-    .pipe(gulp.dest(config.distDir + 'images'));
+  gulp.src([config.srcDir + 'images/**/*'])
+  .pipe(plumber())
+  .pipe(gulp.dest(config.distDir + 'images'));
 });
 
 
 // ☱☲☴ JS
 
-// Compile JS plugins
-gulp.task('scripts', function() {
-  return gulp.src([
-    config.srcDir + 'js/plugins/**/*.js'
-  ])
-	  .pipe(plumber())
-    .pipe(concat('plugins.js'))
-    .on('error', gutil.log)
-    .pipe(gulp.dest(config.srcDir + 'js'))
-    .pipe(browserSync.reload({stream: true}));
-});
+// JS linting
 
-// Compile JS settings
-gulp.task('scripts-settings', function() {
-	return gulp.src([
-    config.srcDir + 'js/settings/**/*.js'
-  ])
-	  .pipe(plumber())
-	  // Lint JS files and report errors
-	  .pipe(jshint())
-    .pipe(jshint.reporter(stylish))
-    .pipe(concat('main.js'))
-    .on('error', gutil.log)
-    .pipe(gulp.dest(config.srcDir + 'js'))
-    .pipe(browserSync.reload({stream: true}));
-});
-
-// Compile and minimize JS plugins for deployment
-gulp.task('scripts-production', function() {
-  return gulp.src([
-    config.srcDir + 'js/plugins/**/*.js'
-  ])
-	  .pipe(plumber())
-    .pipe(concat('plugins.js'))
-    .pipe(uglify())
-    .pipe(gulp.dest(config.distDir + 'js'));
-});
-
-// Compile and minimize JS settings for deployment
-gulp.task('scripts-settings-production', function() {
-  return gulp.src([
-    config.srcDir + 'js/settings/**/*.js'
-  ])
-	  .pipe(plumber())
+gulp.task('js-lint', function(){
+  return gulp.src([config.srcDir + 'js/settings/**/*.js'])
     .pipe(jshint())
-    .pipe(jshint.reporter(stylish))
-    .pipe(concat('main.js'))
-    .pipe(uglify())
-    .pipe(gulp.dest(config.distDir + 'js'));
+    .pipe(jshint.reporter(stylish));
 });
 
-// Copy vendor scripts for deployment
-gulp.task('vendor-scripts', function() {
-  gulp.src(config.srcDir + 'js/vendor/**/*.*')
-	  .pipe(gulp.dest(config.distDir + 'js/vendor'));
-});
+// Inject JS plugins and settings
 
+gulp.task('scripts-inject', function(){
+  return gulp.src(config.srcDir + '/**/*.html')
+    // Inject all *.js files found in js/vendor, js/plugins and js/settings
+    // Do not inject jQuery and modernizr though, they get the special treatment
+    // Lint JS files and report errors
+    .pipe(inject(
+      gulp.src([
+      config.srcDir + 'js/vendor/**/*.js',
+      config.srcDir + 'js/plugins/**/*.js',
+      config.srcDir + 'js/settings/**/*.js',
+      '!' + config.srcDir + 'js/vendor/**/*jquery*.js',
+      '!' + config.srcDir + 'js/vendor/**/*modernizr*.js'],{read: false}), {relative: true}))
+    .pipe(gulp.dest(config.srcDir));
+});
 
 // ☱☲☴ CSS
-
 // Compile SCSS files
 gulp.task('styles', function() {
 	// The master SCSS file that imports everything
 	return gulp.src(config.srcDir + 'css/scss/init.scss')
-    .pipe(plumber({
+   .pipe(plumber({
 		  errorHandler: function (err) {
-        console.log(err);
-        this.emit('end');
+       console.log(err);
+       this.emit('end');
 	    }
 	}))
 	  .pipe(sourceMaps.init())
-    .pipe(sass({
+   .pipe(sass({
 		  errLogToConsole: true,
-      includePaths: [config.srcDir + 'css/scss/']
+     includePaths: [config.srcDir + 'css/scss/']
 	}))
 	  .pipe(autoprefixer(config.browserList))
-    .on('error', gutil.log)
-    .pipe(concat('style.css'))
-    .pipe(sourceMaps.write())
-    .pipe(gulp.dest(config.srcDir + 'css'))
-    .pipe(browserSync.reload({stream: true}));
+   .on('error', gutil.log)
+   .pipe(concat('style.css'))
+   .pipe(sourceMaps.write())
+   .pipe(gulp.dest(config.srcDir + 'css'))
+   .pipe(browserSync.reload({stream: true}));
 });
 
-//compile SCSS files for deployment
+// Compile and minify SCSS files for production
 gulp.task('styles-production', function() {
 	// The master SCSS file that imports everything
 	return gulp.src(config.srcDir + 'css/scss/init.scss')
 	  .pipe(plumber())
-    .pipe(sass({
+   .pipe(sass({
 		  includePaths: [
 			config.srcDir + 'css/scss',
 		]}))
@@ -194,61 +165,57 @@ gulp.task('styles-production', function() {
 // ☱☲☴ HTML
 
 // Watch all HTML files
-
 gulp.task('html', function() {
 //Watch all HTML files and refresh when something changes
 	return gulp.src([config.srcDir + '**/*.html'])
 	  .pipe(plumber())
-    .pipe(browserSync.reload({stream: true}))
-    .on('error', gutil.log);
+   .pipe(browserSync.reload({stream: true}))
+   .on('error', gutil.log);
 });
 
-
-// Migrate over all HTML files for deployment
-gulp.task('html-production', function() {
+// ☱☲☴ Production
+gulp.task('migrate', function() {
 	// Copy everything, even invisible files but …
 	// … do not copy the JS plugins & settings and the SASS files
 	gulp.src([
-	  config.srcDir + '*',
-	  config.srcDir + '**/*',
-	  config.srcDir + '.*',
-      '!' + config.srcDir + '**/*.html',
-      '!' + config.srcDir + '{js/plugins,js/plugins/**}',
-      '!' + config.srcDir + '{js/*.js,js/settings,js/settings/**}',
-      '!' + config.srcDir + '{css,css/**/*}'
-    ])
-    .pipe(plumber())
-    .pipe(gulp.dest(config.distDir));
+	  config.srcDir + '**/*', config.srcDir + '**/.*',
+     '!' + config.srcDir + '**/*.html',
+     '!' + config.srcDir + '{js/plugins,js/plugins/**}',
+     '!' + config.srcDir + '{js/*.js,js/settings,js/settings/**}',
+     '!' + config.srcDir + '{css/style.css,css/scss,css/scss/**}'
+   ])
+   .pipe(plumber())
+   .pipe(gulp.dest(config.distDir));
+ // Concatenate and inject a minified JS file
+ gulp.src([config.srcDir + '**/*.html'])
+   .pipe(plumber())
+   .pipe(useref())
+   // Minify only JS files
+   .pipe(gulpIf('*.js', uglify()))
+   .pipe(gulp.dest(config.distDir));
+});
 
-// Copy and minimize all HTML Files
-	gulp.src([config.srcDir + '**/*.html'])
-	  .pipe(plumber())
-    .pipe(HTMLmin({
-      collapseWhitespace: true,
-      removeComments: true,
-	  }))
-    .pipe(gulp.dest(config.distDir));
-
-// Grab all font files
-	gulp.src(config.srcDir + 'fonts/**/*')
-		.pipe(plumber())
-		.pipe(gulp.dest(config.distDir + 'fonts'));
-
-// Grab all styles
-	gulp.src([config.srcDir + 'css/*.css', '!' + config.srcDir + 'css/style.css'])
-		.pipe(plumber())
-		.pipe(gulp.dest(config.distDir + 'css'));
+// Minify HTML
+gulp.task('html-min', function() {
+ return gulp.src(config.distDir + '**/*.html')
+   .pipe(HTMLmin({
+     collapseWhitespace: true,
+     processConditionalComments: true,
+     removeComments: true,
+     minifyJS: true
+   }))
+   .pipe(gulp.dest(config.distDir));
 });
 
 // Clean the dist directory
 gulp.task('clean', function () {
-  return del([config.distDir + '*', config.distDir + '.*', config.distDir + '*/**']);
+ return del([config.distDir + '*', config.distDir + '.*', config.distDir + '*/**']);
 });
 
 // Create folders in dist directory using shell
 gulp.task('scaffold', function() {
 	return shell.task([
-    'cd dist',
+   'cd dist',
 		'mkdir dist/fonts',
 		'mkdir dist/images',
 		'mkdir dist/js',
@@ -256,19 +223,27 @@ gulp.task('scaffold', function() {
 	]);
 });
 
+gulp.task('shorthand', shell.task([
+  'echo hello',
+  'echo world',
+  'mkdir dist/fonts',
+  'mkdir dist/images',
+  'mkdir dist/js',
+  'mkdir dist/css'
+]));
 
-// ☱☲☴ Critical task
+// ☱☲☴ Critical
 // Insert render blocking CSS in index.html inline
-gulp.task('critical', function (cb) {
-  return critical.generate({
-    inline: true,
-    base: 'dist/',
-    src: 'index.html',
-    dest: 'dist/index.html',
-    minify: true,
-    width: 320,
-    height: 480
-  });
+gulp.task('critical', function () {
+  return gulp.src(config.distDir + '**/*.html')
+  .pipe(critical({
+   inline: true,
+   base: 'dist/',
+   minify: true,
+   width: 320,
+   height: 480
+ }))
+ .pipe(gulp.dest(config.distDir));
 });
 
 
@@ -276,15 +251,15 @@ gulp.task('critical', function (cb) {
 
 // Serve dist folder with swank on port 8000
 gulp.task('serve', function(cb){
-  swank({
-    watch: false,
-    path: 'dist',
-    log: false
-  })
-  .then(function(s){
-    console.log('Server running: '+s.url);
-    cb();
-  });
+ swank({
+   watch: false,
+   path: 'dist',
+   log: false
+ })
+ .then(function(s){
+   console.log('Server running: '+s.url);
+   cb();
+ });
 });
 
 // -----------------------------------------------------------------------------
@@ -302,58 +277,56 @@ gulp.task('serve', function(cb){
 
 // PageSpeed task for desktop score
 gulp.task('psi-desktop', function() {
-  // Set up a public tunnel so PageSpeed can see the local site.
-  return ngrok.connect(8000, function (err_ngrok, url) {
-    console.log(color.blue('ngrok'), '- serving your site from', color.black.bgBlue(url));
-    // Run PageSpeed once the tunnel is up.
-    pageSpeed.output(url, {
-      strategy: ['desktop'],
-      threshold: 80
-    }, function (err_psi, data) {
-      // Log any potential errors and return a FAILURE.
-      if (err_psi) {
-        log(err_psi);
-        process.exit(1);
-      }
-      // Kill the ngrok tunnel and return SUCCESS.
-      process.exit(0);
-    });
-  });
+ // Set up a public tunnel so PageSpeed can see the local site.
+ return ngrok.connect(8000, function (err_ngrok, url) {
+   console.log(color.blue('ngrok'), '- serving your site from', color.black.bgBlue(url));
+   // Run PageSpeed once the tunnel is up.
+   pageSpeed.output(url, {
+     strategy: ['desktop'],
+     threshold: 80
+   }, function (err_psi, data) {
+     // Log any potential errors and return a FAILURE.
+     if (err_psi) {
+       log(err_psi);
+       process.exit(1);
+     }
+     // Kill the ngrok tunnel and return SUCCESS.
+     process.exit(0);
+   });
+ });
 });
 
 // PageSpeed task for mobile score
 gulp.task('psi-mobile', function() {
-  // Set up a public tunnel so PageSpeed can see the local site.
-  return ngrok.connect(8000, function (err_ngrok, url) {
-    console.log(color.blue('ngrok'), '- serving your site from', color.black.bgBlue(url));
-    // Run PageSpeed once the tunnel is up.
-    pageSpeed.output(url, {
-      strategy: ['mobile'],
-      threshold: 80
-    }, function (err_psi, data) {
-      // Log any potential errors and return a FAILURE.
-      if (err_psi) {
-        log(err_psi);
-        process.exit(1);
-      }
-      // Kill the ngrok tunnel and return SUCCESS.
-      process.exit(0);
-    });
-  });
+ // Set up a public tunnel so PageSpeed can see the local site.
+ return ngrok.connect(8000, function (err_ngrok, url) {
+   console.log(color.blue('ngrok'), '- serving your site from', color.black.bgBlue(url));
+   // Run PageSpeed once the tunnel is up.
+   pageSpeed.output(url, {
+     strategy: ['mobile'],
+     threshold: 80
+   }, function (err_psi, data) {
+     // Log any potential errors and return a FAILURE.
+     if (err_psi) {
+       log(err_psi);
+       process.exit(1);
+     }
+     // Kill the ngrok tunnel and return SUCCESS.
+     process.exit(0);
+   });
+ });
 });
 
 
 // ☱☲☴ The watcher
 
 gulp.task('watch', function() {
-  //watch all HTML, JS and CSS files and the image folder
-//   gulp.watch([config.srcDir + '**/*.html', config.srcDir + '**/*.php'], browserSync.reload);
- gulp.watch([config.srcDir + '**/*.html', config.srcDir + '**/*.php'], ['html'], browserSync.reload);
+// watch all HTML, JS and CSS files and the image folder
 // This always reports changes in multiple files wtf?
-  gulp.watch(config.srcDir + 'css/scss/**', ['styles']);
-  gulp.watch(config.srcDir + 'js/plugins/**/*', ['scripts']);
-  gulp.watch(config.srcDir + 'js/settings/**/*', ['scripts-settings']);
-  gulp.watch([config.srcDir + 'images/**/*.{png,jpg,gif,svg}'], ['images']);
+ gulp.watch([config.srcDir + '**/*.html', config.srcDir + '**/*.php'], ['html'], browserSync.reload);
+ gulp.watch(config.srcDir + 'css/scss/**', ['styles']);
+ gulp.watch([config.srcDir + 'js/plugins/**/*', config.srcDir + 'js/settings/**/*'], ['scripts-inject', 'js-lint']);
+ gulp.watch([config.srcDir + 'images/**/*.{png,jpg,gif,svg}'], ['images']);
 });
 
 
@@ -363,19 +336,23 @@ gulp.task('watch', function() {
 // Start web server,
 // sync browsers,
 // compress all images,
-// concat all scripts and SCSS files
-gulp.task('default', gulpSequence('scripts', 'scripts-settings', 'vendor-scripts', 'styles', 'images', ['browserSync', 'watch']));
+// inject scripts,
+// handle SCSS files
+
+gulp.task('default', gulpSequence(['scripts-inject', 'styles', 'images'], ['browserSync', 'watch']));
 
 
-// gulp.task('production', gulpSequence('clean', 'scaffold', ['scripts-production', 'scripts-settings-production', 'styles-production', 'images-production', 'html-production'], 'critical'));
+// ☱☲☴ Build Task
+// Clean dist folder,
+// create folder structure,
+// inject a minimized main JS file,
+// handle and minimize SCSS files,
+// insert render blocking CSS inline,
+// minimize HTML files,
+// notify when finished
 
-// ☱☲☴ Production Task
-// Clean dist folder
-// Minimize all the things and copy them over
-// Insert render blocking CSS inline
-// Notify when finished
 gulp.task('production', function (cb) {
-  gulpSequence('clean', 'scaffold', ['scripts-production', 'scripts-settings-production', 'styles-production', 'images-production', 'html-production'], 'critical')(cb);
+  gulpSequence('clean', 'scaffold', ['styles-production', 'images-production', 'migrate'], 'critical','html-min')(cb);
 });
 
 gulp.task('build', ['production'], function () {
@@ -387,7 +364,6 @@ gulp.task('build', ['production'], function () {
       open: config.distURL,
       icon: path.join(__dirname, 'app/images/favicon/favicon.png')
     }))
-    .on('end', function(){ gutil.log('Done!'); });
 });
 
 
