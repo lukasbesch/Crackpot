@@ -352,7 +352,7 @@ gulp.task('default', gulpSequence(['scripts-inject', 'styles', 'images'], ['brow
 // notify when finished
 
 gulp.task('production', function (cb) {
-  gulpSequence('clean', 'scaffold', ['styles-production', 'images-production', 'migrate'], 'critical','html-min')(cb);
+  gulpSequence('clean', 'scaffold', ['migrate', 'styles-production', 'images-production'], 'critical', 'html-min')(cb);
 });
 
 gulp.task('build', ['production'], function () {
