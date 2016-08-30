@@ -323,10 +323,10 @@ gulp.task('psi-mobile', function() {
 gulp.task('watch', function() {
 // watch all HTML, JS and CSS files and the image folder
 // This always reports changes in multiple files wtf?
- gulp.watch([config.srcDir + '**/*.html', config.srcDir + '**/*.php'], ['html'], browserSync.reload);
- gulp.watch(config.srcDir + 'css/scss/**', ['styles']);
- gulp.watch([config.srcDir + 'js/plugins/**/*', config.srcDir + 'js/settings/**/*'], ['scripts-inject', 'js-lint']);
- gulp.watch([config.srcDir + 'images/**/*.{png,jpg,gif,svg}'], ['images']);
+  gulp.watch([config.srcDir + '**/*.html', config.srcDir + '**/*.php'], ['html'], browserSync.reload);
+  gulp.watch(config.srcDir + 'css/scss/**', ['styles']);
+  gulp.watch([config.srcDir + 'js/plugins/**/*', config.srcDir + 'js/settings/**/*'], ['scripts-inject', 'js-lint']);
+  gulp.watch([config.srcDir + 'images/**/*.{png,jpg,gif,svg}'], ['images']);
 });
 
 
@@ -356,14 +356,13 @@ gulp.task('production', function (cb) {
 });
 
 gulp.task('build', ['production'], function () {
-  return gulp.src('gulpfile.js')
-    .pipe(notifier.notify({
-      title: 'Crackpot',
-      subtitle: 'Site built in',
-      message: config.distURL,
-      open: config.distURL,
-      icon: path.join(__dirname, 'app/images/favicon/favicon.png')
-    }))
+  notifier.notify({
+    title: 'Crackpot',
+    subtitle: 'Site built in',
+    message: config.distURL,
+    open: config.distURL,
+    icon: path.join(__dirname, 'app/images/favicon/favicon.png')
+  })
 });
 
 
