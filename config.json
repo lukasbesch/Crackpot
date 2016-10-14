@@ -1,6 +1,6 @@
 {
     "projectURL"    : "http://localhost:3000",
-    "distURL"       : "http://localhost:8888/_Frameworks/Crackpot/dist/",
+    "distURL"       : "http://bettertimes.dev/_frameworks/crackpot/dist/",
     "liveURL"       : "http://wwww.example.com",
     "srcDir"        : "src/",
     "distDir"       : "dist/",
