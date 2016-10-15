@@ -1,10 +1,10 @@
-# Crackpot – A nice Gulp frontend boilerplate
-==========================
+#ϾЯ∆ϾКƤØ₮
+
+☱☲☴☲☱☲ ॐ ☴☲☱☲☴☲☲
 
 This is very WIP and not intended for production use!
 
-
-==========================
+☴☲☱☲☴☲☲☴☲☱☲☴☲☲☴
 
 * npm install
 * Master task: gulp  
@@ -15,11 +15,17 @@ This is very WIP and not intended for production use!
 * PSI Desktop task: gulp desktop  
     Run desktop Google PageSpeed Insights on dist folder
 
-==========================
+☴☲☱☲☴☲☲☴☲☱☲☴☲☲☴
 
-# To do
+## To do
 
-• Bower integration
-• UnCSS (?)
+• PSI in Vagrant  
+• Bower integration  
+• UnCSS (?)  
 • Custom Modernizr (?)
+
+☴☲☱☲☴☲☲☴☲☱☲☴☲☲☴
+
+www.theofficial.de  
+www.bettertimes.de
 
