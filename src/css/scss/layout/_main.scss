@@ -29,3 +29,34 @@ body {
   vertical-align: middle;  /* vertical alignment of the inline element */
   margin-top: -40px;
 }
+
+a {
+  &:link, &:visited {
+    color: slategray;
+    transition: all .3s;
+    text-decoration: none;
+  }
+  &:hover, &:focus {
+    color: darkgray;
+  }
+}
+
+h2 a:link, h2 a:visited {
+  padding-left: 2px;
+  padding-right: 2px;
+  color: slategray;
+  border-bottom: 2px solid slategray;
+}
+
+h2 a:hover,
+h2 a:focus {
+  color: $main;
+  border-color: rgba(0,0,0,0);
+  background-color: slategray;
+  text-decoration: none;
+}
+
+a .fa-github {
+  margin-top: 1em;
+  font-size: 50px;
+}

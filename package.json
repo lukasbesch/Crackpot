@@ -1,7 +1,7 @@
 {
   "name": "Crackpot",
-  "version": "0.0.1",
-  "description": "A Gulp boilerplate",
+  "version": "0.8",
+  "description": "A simple Gulp boilerplate for ultra fast landing pages",
   "author": {
     "name": "David Spörl",
     "url": "http://www.theofficial.de"

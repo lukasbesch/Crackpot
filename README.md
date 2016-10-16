@@ -1,10 +1,10 @@
 #ϾЯ∆ϾКƤØ₮
 
-☱☲☴☲☱☲☱☲☴☱☲☴☴☲☱☲☴☲☲☱☲☴☱☲☴☱☲☴☱☲  
+☱☲☴☲☱☲☱☲☴☱☲☴☴☲☱☲☴☲☲☱☲☴☱☲☴☱☲☴☱☲☴☱☲  
 
-Crackpot is a simple Gulp boilerplate for fast landing pages.   
+Crackpot is a simple Gulp boilerplate for ultra fast landing pages.   
 
-☴☲☱☲☴☲☲☴☲☱☲☴☲☲☴☱☲☴☱☲☴☱☲☴☱☲☴☱☲☴
+☴☲☱☲☴☲☲☴☲☱☲☴☲☲☴☱☲☴☱☲☴☱☲☴☱☲☴☱☲☴☴☱☲
 
 ##Installation
 
@@ -28,7 +28,7 @@ __Build task: gulp build__
 * Minimizes all HTML files
 * Inserts render blocking CSS inline
     
-☱☲☴☲☱☲☱☲☴☱☲☴☴☲☱☲☴☲☲☱☲☴☱☲☴☱☲☴☱☲☴
+☱☲☴☲☱☲☱☲☴☱☲☴☴☲☱☲☴☲☲☱☲☴☱☲☴☱☲☴☱☲☴☴☱☲
 
 #### To do
 
@@ -38,8 +38,8 @@ __Build task: gulp build__
 • Custom Modernizr (?)  
 • Error handling
 
-☱☲☴☲☱☲☱☲☴☱☲☴☴☲☱☲☴☲☲☱☲☴☱☲☴☱☲☴☱☲☴
+☱☲☴☲☱☲☱☲☴☱☲☴☴☲☱☲☴☲☲☱☲☴☱☲☴☱☲☴☱☲☴☴☱☲
 
-www.theofficial.de  
-www.bettertimes.de
+[crackpot.theofficial.de](http://crackpot.theofficial.de/ "Crackpot")   
+[www.bettertimes.de](http://www.bettertimes.de/ "Agentur für Webdesign und SEO in Köln")   
 
