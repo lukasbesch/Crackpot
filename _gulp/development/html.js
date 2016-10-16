@@ -1,7 +1,7 @@
 // ☱☲☴ HTML
 
 var gulp            = require('gulp');
-var config          = require('../../../config.json');
+var config          = require('../config.json');
 var browserSync     = require('browser-sync');
 var gutil           = require('gulp-util');
 var plumber         = require('gulp-plumber');

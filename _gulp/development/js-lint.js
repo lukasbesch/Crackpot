@@ -1,7 +1,7 @@
 // ☱☲☴ JS linting
 
 var gulp            = require('gulp');
-var config          = require('../../../config.json');
+var config          = require('../config.json');
 var jshint          = require('gulp-jshint');
 var stylish         = require('jshint-stylish');
 

@@ -1,10 +1,9 @@
 // ☱☲☴ JS inject
 
 var gulp            = require('gulp');
-var config          = require('../../../config.json');
+var config          = require('../config.json');
 var inject          = require('gulp-inject');
 var jshint          = require('gulp-jshint');
-var stylish         = require('jshint-stylish');
 
 // Inject JS plugins and settings
 

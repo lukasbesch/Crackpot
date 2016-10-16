@@ -2,7 +2,7 @@
 
 var gulp            = require('gulp');
 var gulpSequence    = require('gulp-sequence').use(gulp);
-var config          = require('../../config.json');
+var config          = require('../config.json');
 
 // Clean dist folder,
 // create folder structure,

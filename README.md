@@ -22,7 +22,8 @@ This is very WIP and not intended for production use!
 • PSI in Vagrant  
 • Bower integration  
 • UnCSS (?)  
-• Custom Modernizr (?)
+• Custom Modernizr (?)  
+• Error handling
 
 ☴☲☱☲☴☲☲☴☲☱☲☴☲☲☴
 

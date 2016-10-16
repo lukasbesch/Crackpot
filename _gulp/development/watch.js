@@ -1,7 +1,7 @@
 // ☱☲☴ The watcher
 
 var gulp            = require('gulp');
-var config          = require('../../../config.json');
+var config          = require('../config.json');
 var browserSync     = require('browser-sync');
 
 // watch all HTML, JS and CSS files and the images folder

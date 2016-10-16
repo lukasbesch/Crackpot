@@ -1,7 +1,7 @@
 // ☱☲☴ BrowserSync
 
 var gulp            = require('gulp');
-var config          = require('../../../config.json');
+var config          = require('../config.json');
 var browserSync     = require('browser-sync');
 
 gulp.task( 'browserSync', function() {

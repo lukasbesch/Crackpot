@@ -1,7 +1,7 @@
 // ☱☲☴ Clean
 
 var gulp            = require('gulp');
-var config          = require('../../../config.json');
+var config          = require('../config.json');
 var del             = require('del');
 
 // Clean the dist directory

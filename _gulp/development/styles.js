@@ -1,7 +1,7 @@
 // ☱☲☴ Styles
 
 var gulp            = require('gulp');
-var config          = require('../../../config.json');
+var config          = require('../config.json');
 var autoprefixer    = require('gulp-autoprefixer');
 var browserSync     = require('browser-sync');
 var concat          = require('gulp-concat');

@@ -1,7 +1,7 @@
 // ☱☲☴ Critical
 
 var gulp            = require('gulp');
-var config          = require('../../../config.json');
+var config          = require('../config.json');
 var critical        = require('critical').stream;
 
 // Insert render blocking CSS in HTML files inline

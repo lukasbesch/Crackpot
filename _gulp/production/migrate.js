@@ -1,7 +1,7 @@
 // ☱☲☴ Migrate
 
 var gulp            = require('gulp');
-var config          = require('../../../config.json');
+var config          = require('../config.json');
 var gulpIf          = require('gulp-if');
 var plumber         = require('gulp-plumber');
 var uglify          = require('gulp-uglify');

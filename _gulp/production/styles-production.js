@@ -1,11 +1,10 @@
 // ☱☲☴ Styles production
 
 var gulp            = require('gulp');
-var config          = require('../../../config.json');
+var config          = require('../config.json');
 var autoprefixer    = require('gulp-autoprefixer');
 var CSSnano         = require('gulp-cssnano');
 var sass            = require('gulp-sass');
-var gutil           = require('gulp-util');
 var plumber         = require('gulp-plumber');
 var concat          = require('gulp-concat');
 
@@ -16,7 +15,7 @@ gulp.task('styles-production', function () {
         .pipe(plumber())
         .pipe(sass({
             includePaths: [
-                config.srcDir + 'css/scss',
+                config.srcDir + 'css/scss'
             ]
         }))
         .pipe(autoprefixer(config.browserList))

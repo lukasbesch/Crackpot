@@ -1,7 +1,7 @@
 // ☱☲☴ Minify HTML
 
 var gulp            = require('gulp');
-var config          = require('../../../config.json');
+var config          = require('../config.json');
 var HTMLmin         = require('gulp-htmlmin');
 
 // Minify all HTML files,

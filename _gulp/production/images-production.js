@@ -1,7 +1,7 @@
 // ☱☲☴ Images production
 
 var gulp            = require('gulp');
-var config          = require('../../../config.json');
+var config          = require('../config.json');
 var plumber         = require('gulp-plumber');
 
 // Copy images into dist folder

@@ -1,7 +1,7 @@
 // ☱☲☴ Images
 
 var gulp            = require('gulp');
-var config          = require('../../../config.json');
+var config          = require('../config.json');
 var cache           = require('gulp-cache');
 var imagemin        = require('gulp-imagemin');
 
