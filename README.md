@@ -1,23 +1,36 @@
 #ϾЯ∆ϾКƤØ₮
 
-☱☲☴☲☱☲ ॐ ☴☲☱☲☴☲☲
+☱☲☴☲☱☲☱☲☴☱☲☴☴☲☱☲☴☲☲☱☲☴☱☲☴☱☲☴☱☲  
 
-This is very WIP and not intended for production use!
+Crackpot is a simple Gulp boilerplate for fast landing pages.   
 
-☴☲☱☲☴☲☲☴☲☱☲☴☲☲☴
+☴☲☱☲☴☲☲☴☲☱☲☴☲☲☴☱☲☴☱☲☴☱☲☴☱☲☴☱☲☴
 
-* npm install
-* Master task: gulp  
-    Serve 'src' to localhost:3000
-* Build task: gulp build  
-* PSI mobile task: gulp mobile  
-    Run mobile Google PageSpeed Insights on dist folder
-* PSI Desktop task: gulp desktop  
-    Run desktop Google PageSpeed Insights on dist folder
+##Installation
 
-☴☲☱☲☴☲☲☴☲☱☲☴☲☲☴
+→ npm install  
 
-## To do
+##Setup
+Adjust _gulp/config.json to your needs
+
+##Tasks
+__Default task: gulp__  
+* Serves src/ to localhost:3000  
+* Handles SCSS files  
+* Compresses images
+* Injects scripts
+* Watches everything and refreshes your browsers when something changes
+
+__Build task: gulp build__
+* Copies everything important from src/ to dist/
+* Combines all JS files into a minimized main.js file
+* Combines all CSS files into a minimized style.css file
+* Minimizes all HTML files
+* Inserts render blocking CSS inline
+    
+☱☲☴☲☱☲☱☲☴☱☲☴☴☲☱☲☴☲☲☱☲☴☱☲☴☱☲☴☱☲☴
+
+#### To do
 
 • PSI in Vagrant  
 • Bower integration  
@@ -25,7 +38,7 @@ This is very WIP and not intended for production use!
 • Custom Modernizr (?)  
 • Error handling
 
-☴☲☱☲☴☲☲☴☲☱☲☴☲☲☴
+☱☲☴☲☱☲☱☲☴☱☲☴☴☲☱☲☴☲☲☱☲☴☱☲☴☱☲☴☱☲☴
 
 www.theofficial.de  
 www.bettertimes.de
