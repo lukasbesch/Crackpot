@@ -7,7 +7,6 @@ html, body {
 }
 
 body {
-  color: $white;
   background: $main;
 }
 
@@ -31,28 +30,29 @@ body {
 }
 
 a {
+
   &:link, &:visited {
-    color: slategray;
+    color: $brand;
     transition: all .3s;
     text-decoration: none;
   }
   &:hover, &:focus {
-    color: darkgray;
+    color: darken($brand, 10%);
   }
 }
 
 h2 a:link, h2 a:visited {
   padding-left: 2px;
   padding-right: 2px;
-  color: slategray;
-  border-bottom: 2px solid slategray;
+  color: $brand;
+  border-bottom: 2px solid $brand;
 }
 
 h2 a:hover,
 h2 a:focus {
   color: $main;
   border-color: rgba(0,0,0,0);
-  background-color: slategray;
+  background-color: $brand;
   text-decoration: none;
 }
 
