@@ -1,9 +1,9 @@
-// Import vendor CSS
-@import "vendor/bootstrap";
-
 // Core variables and mixins
 @import "config/variables";
 @import "config/mixins";
+
+// Import vendor CSS
+@import "vendor/bootstrap";
 
 // Import components
 @import 'layout/_typography';
