@@ -9,9 +9,9 @@ var shell           = require('gulp-shell');
 gulp.task('scaffold', function () {
     return shell.task([
         'cd dist',
-        'mkdir dist/fonts',
-        'mkdir dist/images',
-        'mkdir dist/js',
-        'mkdir dist/css'
+        'mkdir ' + config.distDir + 'fonts',
+        'mkdir ' + config.distDir + 'images',
+        'mkdir ' + config.distDir + 'js',
+        'mkdir ' + config.distDir + 'css'
     ]);
 });

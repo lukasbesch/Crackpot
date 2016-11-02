@@ -10,7 +10,7 @@ gulp.task('critical', function () {
     return gulp.src(config.distDir + '**/*.html')
         .pipe(critical({
             inline: true,
-            base: 'dist/',
+            base: config.distDir,
             minify: true,
             width: 320,
             height: 480
